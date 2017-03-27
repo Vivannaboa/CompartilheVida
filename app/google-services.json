@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "292179301913",
+    "firebase_url": "https://compartilhevida-6fce1.firebaseio.com",
+    "project_id": "compartilhevida-6fce1",
+    "storage_bucket": "compartilhevida-6fce1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292179301913:android:a0983eb45e33e273",
+        "android_client_info": {
+          "package_name": "br.com.compartilhevida.compartilhevida"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "292179301913-f0cu6cedipgbqmrb3qlc6f1b6v10bj5o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.compartilhevida.compartilhevida",
+            "certificate_hash": "564feb39d46b879ba38647d05ddf9bf04b73a87b"
+          }
+        },
+        {
+          "client_id": "292179301913-sk5k1a1h28sk5q0ga9u54435e8gfq5i9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg6RiwZfD_-YVK35fb_vujs6tHJ8kSoJQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "292179301913-sk5k1a1h28sk5q0ga9u54435e8gfq5i9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
