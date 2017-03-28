@@ -25,12 +25,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -40,7 +38,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,12 +45,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 
 import br.com.compartilhevida.compartilhevida.Entidades.User;
 import br.com.compartilhevida.compartilhevida.Utilitarios.Validador;
+
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "SignInActivity";
@@ -67,15 +68,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private GoogleApiClient mGoogleApiClient;
-
+    public static GoogleApiClient mGoogleApiClient;
     private User user;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Configuracoes.getInstance(this);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
@@ -99,8 +98,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestProfile()
-                .requestScopes(new Scope(Scopes.PLUS_ME))
-                .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .build();
 
         // Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
@@ -132,9 +129,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 Toast.makeText(getApplicationContext(), "Ops, não foi possivel logar com o Facebook ", Toast.LENGTH_SHORT).show();
             }
         });
-
-        mAuthListener = getFirebaseAuthResultHandler();
         user = User.getInstance(this);
+        mAuthListener = getFirebaseAuthResultHandler();
+
     }
 
     private FirebaseAuth.AuthStateListener getFirebaseAuthResultHandler() {
@@ -147,18 +144,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 if (userFirebase == null) {
                     hideProgressDialog();
                     return;
-                }
-                if (user.getUid() == null
-                        && isNameOk(user, userFirebase)) {
-
+                }else{
                     user.setUid(userFirebase.getUid());
-                    user.setName(userFirebase.getDisplayName());
-                    user.setEmail(userFirebase.getEmail());
-                    user.setUrlPhoto(userFirebase.getPhotoUrl().toString());
                     adicionarUsuario();
+                    goMainScreen();
                 }
 
-                goMainScreen();
+
             }
         };
         return (callback);
@@ -166,7 +158,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private boolean isNameOk(User user, FirebaseUser firebaseUser) {
         return (
-                user.getName() != null
+                user.getFirst_name() != null
                         || firebaseUser.getDisplayName() != null
         );
     }
@@ -258,9 +250,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
+                user.setEmail(account.getEmail());
+                user.setFirst_name(account.getGivenName());
+                user.setLast_name(account.getFamilyName());
+                user.setUid(account.getId());
+                user.setUrlPhoto(account.getPhotoUrl().toString());
                 accessGoogleLoginData(account.getIdToken());
-                String personGivenName = account.getGivenName();
-
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -287,7 +282,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
-            //showProgressDialog();
+            showProgressDialog();
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(GoogleSignInResult googleSignInResult) {
@@ -340,7 +335,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
             AuthCredential credential = FacebookAuthProvider.getCredential(tokens[0]);
             credential = provider.equalsIgnoreCase("google") ? GoogleAuthProvider.getCredential(tokens[0], null) : credential;
-
+            user.setProvider(provider);
 
             mAuth.signInWithCredential(credential)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -371,15 +366,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     public void onCompleted(
                             JSONObject object,
                             GraphResponse response) {
-//                        Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                        // Application code
+                        Bundle bFacebookData = getFacebookData(object);
                     }
                 });
         Bundle parameters = new Bundle();
         parameters.putString("fields", "id, first_name, last_name, email, gender, birthday, location");
         request.setParameters(parameters);
         request.executeAsync();
-
 
 
         accessLoginData(
@@ -421,5 +414,47 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         });
 
     }
+
+    private Bundle getFacebookData(JSONObject object) {
+        Bundle bundle = null;
+        try {
+            bundle = new Bundle();
+            String id = object.getString("id");
+
+            try {
+                URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=150");
+                Log.i("profile_pic", profile_pic + "");
+                bundle.putString("profile_pic", profile_pic.toString());
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            bundle.putString("idFacebook", id);
+            if (object.has("first_name"))
+                bundle.putString("first_name", object.getString("first_name"));
+            user.setFirst_name(object.getString("first_name"));
+            if (object.has("last_name"))
+                bundle.putString("last_name", object.getString("last_name"));
+            user.setLast_name(object.getString("last_name"));
+            if (object.has("email"))
+                bundle.putString("email", object.getString("email"));
+            user.setEmail(object.getString("email"));
+            if (object.has("gender"))
+                bundle.putString("gender", object.getString("gender"));
+            user.setGender(object.getString("gender"));
+            if (object.has("birthday"))
+                bundle.putString("birthday", object.getString("birthday"));
+            user.setBirthday(object.getString("birthday"));
+            if (object.has("location"))
+                bundle.putString("location", object.getJSONObject("location").getString("name"));
+            user.setCidade(object.getJSONObject("location").getString("name"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return bundle;
+    }
+
 }
 

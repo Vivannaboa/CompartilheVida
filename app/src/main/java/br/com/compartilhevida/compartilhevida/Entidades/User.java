@@ -14,12 +14,13 @@ public class User {
     private Context context;
 
     private String uid;
-    private String name;
+    private String first_name;
+    private String last_name;
     private String email;
     private String provider;
     private String urlPhoto;
-    private String dtNascimento;
-    private String sexo;
+    private String birthday;
+    private String gender;
     private String tipoSanguineo;
     private String cidade;
 
@@ -41,24 +42,41 @@ public class User {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("uid", uid);
-        result.put("name", name);
+        result.put("first_name", first_name);
+        result.put("last_name", last_name);
         result.put("email", email);
-        result.put("sexo", sexo);
+        result.put("urlPhoto",urlPhoto);
+        result.put("gender", gender);
         result.put("provider",provider);
-        result.put("dtNascimento",dtNascimento);
+        result.put("birthday",birthday);
         result.put("tipoSanguineo", tipoSanguineo);
         result.put("cidade", cidade);
-        result.put("urlPhoto",urlPhoto);
-
         return result;
     }
 
-    public String getName() {
-        return name;
+
+    public String getUid() {
+        return uid;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getLast_name() {
+        return last_name;
+    }
+
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
     }
 
     public String getEmail() {
@@ -69,28 +87,36 @@ public class User {
         this.email = email;
     }
 
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-
-    public String getDtNascimento() {
-        return dtNascimento;
+    public String getProvider() {
+        return provider;
     }
 
-    public void setDtNascimento(String dtNascimento) {
-        this.dtNascimento = dtNascimento;
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
-    public String getSexo() {
-        return sexo;
+    public String getUrlPhoto() {
+        return urlPhoto;
     }
 
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
+    public void setUrlPhoto(String urlPhoto) {
+        this.urlPhoto = urlPhoto;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getTipoSanguineo() {
@@ -107,20 +133,5 @@ public class User {
 
     public void setCidade(String cidade) {
         this.cidade = cidade;
-    }
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public String getUrlPhoto() {
-        return urlPhoto;
-    }
-
-    public void setUrlPhoto(String urlPhoto) {
-        this.urlPhoto = urlPhoto;
     }
 }

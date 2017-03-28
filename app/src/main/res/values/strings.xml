@@ -73,4 +73,8 @@
     </string-array>
     <string name="title_activity_post">POstActivity</string>
     <string name="carregando">Carregando...</string>
+    <string name="nome">Nome</string>
+    <string name="sobrenome">Sobrenome</string>
+    <string name="informe_o_nome">Informe seu nome!</string>
+    <string name="informe_o_sobrenome">Informe seu sobrenome!</string>
 </resources>
