@@ -21,7 +21,7 @@ public class User {
     private String urlPhoto;
     private String birthday;
     private String gender;
-    private String tipoSanguineo;
+    private String tipo_sanguineo;
     private String cidade;
 
     public static User getInstance(Context context) {
@@ -49,7 +49,7 @@ public class User {
         result.put("gender", gender);
         result.put("provider",provider);
         result.put("birthday",birthday);
-        result.put("tipoSanguineo", tipoSanguineo);
+        result.put("tipo_sanguineo", tipo_sanguineo);
         result.put("cidade", cidade);
         return result;
     }
@@ -119,13 +119,6 @@ public class User {
         this.gender = gender;
     }
 
-    public String getTipoSanguineo() {
-        return tipoSanguineo;
-    }
-
-    public void setTipoSanguineo(String tipoSanguineo) {
-        this.tipoSanguineo = tipoSanguineo;
-    }
 
     public String getCidade() {
         return cidade;
@@ -133,5 +126,12 @@ public class User {
 
     public void setCidade(String cidade) {
         this.cidade = cidade;
+    }
+
+    public void setTipo_sanguineo(String tipo_sanguineo) {
+        this.tipo_sanguineo = tipo_sanguineo;
+    }
+    public String getTipo_sanguineo() {
+        return tipo_sanguineo;
     }
 }

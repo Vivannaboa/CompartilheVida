@@ -20,27 +20,25 @@
     <string name="email">Email</string>
     <string name="change_email">Change Email</string>
     <string name="change_password">Change Password</string>
-    <string name="send_password_reset_email">Send Password reset email</string>
-    <string name="remove_user">Remove user</string>
-    <string name="new_pass">New Password</string>
+    <string name="send_password_reset_email">Enviar email de redefinição de senha</string>
+    <string name="remove_user">Excluir minha conta</string>
+    <string name="new_pass">Nova senha</string>
     <string name="title_activity_profile">Firebase</string>
 
 
     <string name="hint_name">Fullname</string>
     <string name="btn_login">Entrar</string>
 
-    <string name="btn_link_to_login">Already registered. Login Me!</string>
+    <string name="btn_link_to_login">Já registrado. Entre!</string>
     <string name="title_activity_reset_password">ResetPasswordActivity</string>
 
-    <string name="btn_reset_password">Reset Password</string>
-    <string name="btn_back"><![CDATA[<< Back]]></string>
-    <string name="hint_new_email">New Email</string>
-    <string name="btn_change">Change</string>
-    <string name="btn_send">Send</string>
-    <string name="btn_remove">Remove</string>
-    <string name="btn_sign_out">Sign Out</string>
-    <string name="lbl_forgot_password">Forgot password?</string>
-    <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="btn_reset_password">Trocar a senha</string>
+    <string name="btn_back"><![CDATA[<< Voltar]]></string>
+    <string name="btn_send">Enviar</string>
+    <string name="btn_remove">Remover</string>
+    <string name="btn_sign_out">Sair</string>
+    <string name="lbl_forgot_password">Esqueceu a senha?</string>
+    <string name="forgot_password_msg">Precisamos apenas de sua identificação de e-mail registrada para enviá-lo instruções de redefinição de senha.</string>
 
     <!--Mensagem de validação-->
     <string name="val_email_empty">É necessário informar um E-mail!</string>
@@ -77,4 +75,9 @@
     <string name="sobrenome">Sobrenome</string>
     <string name="informe_o_nome">Informe seu nome!</string>
     <string name="informe_o_sobrenome">Informe seu sobrenome!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="conta">Conta</string>
+    <string name="posts">Posts</string>
 </resources>

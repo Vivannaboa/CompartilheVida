@@ -61,7 +61,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private static final int RC_SIGN_IN = 9001;
 
     private EditText inputEmail, inputPassword;
-    private ProgressBar progressBar;
     private Button btnCadastrar, btnLogin, btnReset;
     private LoginButton loginFacebook;
     private CallbackManager mCallbackManager;
@@ -84,7 +83,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         setSupportActionBar(toolbar);
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         btnCadastrar = (Button) findViewById(R.id.btn_cadastrar);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnReset = (Button) findViewById(R.id.btn_reset_password);
@@ -129,7 +127,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 Toast.makeText(getApplicationContext(), "Ops, não foi possivel logar com o Facebook ", Toast.LENGTH_SHORT).show();
             }
         });
-        user = User.getInstance(this);
+        user = User.getInstance(getBaseContext());
         mAuthListener = getFirebaseAuthResultHandler();
 
     }
@@ -144,7 +142,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 if (userFirebase == null) {
                     hideProgressDialog();
                     return;
-                }else{
+                } else {
                     user.setUid(userFirebase.getUid());
                     adicionarUsuario();
                     goMainScreen();
@@ -202,7 +200,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         return;
                     }
 
-                    progressBar.setVisibility(View.VISIBLE);
+                    showProgressDialog();
 
                     //Autenticar o  usuario
                     mAuth.signInWithEmailAndPassword(email, password)
@@ -212,7 +210,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                                     // Se o login falhar, exiba uma mensagem para o usuário. Se o login for bem-sucedido
                                     // o ouvinte do estado de autenticação será notificado ea lógica para lidar com o
                                     // assinado no usuário pode ser manipulado no ouvinte.
-                                    progressBar.setVisibility(View.GONE);
+                                   hideProgressDialog();
                                     if (!task.isSuccessful()) {
                                         // there was an error
                                         if (password.length() < 6) {
@@ -343,7 +341,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
                             if (!task.isSuccessful()) {
-                                showSnackbar("Login social falhou");
+                                hideProgressDialog();
+                                Toast.makeText(LoginActivity.this, "Não foi possvel entrar!", Toast.LENGTH_SHORT).show();
+
                             }
                         }
                     })
@@ -388,12 +388,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         );
     }
 
-    protected void showSnackbar(String message) {
-        Snackbar.make(progressBar,
-                message,
-                Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
 
     private void onAuthSuccess(FirebaseUser user) {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -443,7 +437,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             user.setEmail(object.getString("email"));
             if (object.has("gender"))
                 bundle.putString("gender", object.getString("gender"));
-            user.setGender(object.getString("gender"));
+            if (object.getString("gender").equalsIgnoreCase("male")) {
+                user.setGender("Masculino");
+            } else {
+                user.setGender("Femenino");
+            }
             if (object.has("birthday"))
                 bundle.putString("birthday", object.getString("birthday"));
             user.setBirthday(object.getString("birthday"));

@@ -5,6 +5,8 @@ import android.app.Application;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 
+import br.com.compartilhevida.compartilhevida.Entidades.User;
+
 /**
  * Created by vivan on 27/03/2017.
  */

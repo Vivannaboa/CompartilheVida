@@ -40,22 +40,34 @@ public class SignupActivity extends BaseActivity  {
     private EditText inputEmail, inputPassword, inputPasswordConfirm, edtNome, edtSobrenome;
     private RadioGroup radioGroupSexo;
     private FirebaseAuth auth;
+    private DatabaseReference mDatabase;
     private Spinner spinnerTipoSanguineo;
     static EditText dataDeNacimento;
     private AutoCompleteTextView autoCompleteTextViewCidade;
     private ArrayAdapter<String> autoComplete;
+    private boolean editando;
+    ArrayAdapter<CharSequence> adapter;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        }else{
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+        }
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
         recuperacomponentes();
-
+        user = User.getInstance(getBaseContext());
+        if (user.getEmail()!=null){
+            recuperarDadosDoUsuarioParaComponentes();
+            editando =true;
+        }
         //Nothing special, create database reference.
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        //Create a new ArrayAdapter with your context and the simple layout for the dropdown menu provided by Android
         autoComplete = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1);
         //Child the root before all the push() keys are found and add a ValueEventListener()
         database.child("cidades").addValueEventListener(new ValueEventListener() {
@@ -77,6 +89,31 @@ public class SignupActivity extends BaseActivity  {
         autoCompleteTextViewCidade.setAdapter(autoComplete);
     }
 
+    private void recuperarDadosDoUsuarioParaComponentes() {
+        dataDeNacimento.setText(user.getBirthday());
+        findViewById(R.id.layout_email).setVisibility(View.GONE);
+        findViewById(R.id.layout_senha).setVisibility(View.GONE);
+        findViewById(R.id.layout_confirmar_senha).setVisibility(View.GONE);
+        findViewById(R.id.btn_reset_password).setVisibility(View.GONE);
+        findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+        if (user.getGender()!=null) {
+            if (user.getGender().toString().equalsIgnoreCase("Masculino")) {
+                RadioButton rb1 = (RadioButton) findViewById(R.id.radioButtonMasculino);
+                rb1.setChecked(true);
+            } else if (user.getGender().toString().equalsIgnoreCase("Femenino")) {
+                RadioButton rb1 = (RadioButton) findViewById(R.id.radioButtonFeminino);
+                rb1.setChecked(true);
+            }
+        }
+        autoCompleteTextViewCidade.setText(user.getCidade());
+        edtNome.setText(user.getFirst_name());
+        edtSobrenome.setText(user.getLast_name());
+        if (spinnerTipoSanguineo!=null) {
+            spinnerTipoSanguineo.setSelection(adapter.getPosition(user.getTipo_sanguineo()));
+        }
+
+    }
+
     private void recuperacomponentes() {
         dataDeNacimento = (EditText) findViewById(R.id.editTextDataNacimento);
         inputEmail = (EditText) findViewById(R.id.email);
@@ -87,6 +124,9 @@ public class SignupActivity extends BaseActivity  {
         edtNome = (EditText) findViewById(R.id.edtNome);
         edtSobrenome =(EditText)findViewById(R.id.edtSobrenome);
         spinnerTipoSanguineo = (Spinner) findViewById(R.id.spinnerTipoSanguineo);
+        adapter = ArrayAdapter.createFromResource(this, R.array.array_tipo_sangineo, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipoSanguineo.setAdapter(adapter);
 //        btnSignIn = (Button) findViewById(R.id.sign_in_button);
 //        btnSignUp = (Button) findViewById(R.id.sign_up_button);
 //        btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
@@ -106,92 +146,94 @@ public class SignupActivity extends BaseActivity  {
     }
 
     public static void populateSetDate(int year, int month, int day) {
-        dataDeNacimento.setText(month + "/" + day + "/" + year);
+        dataDeNacimento.setText( day + "/" +month  + "/" + year);
     }
 
     public void clickEntrar(View v){
         showProgressDialog();
 
         if (!validaForm()){
+            hideProgressDialog();
             return;
         }
 
         String email = inputEmail.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
-        User user = new User();
         user.setFirst_name(edtNome.getText().toString());
         user.setLast_name(edtSobrenome.getText().toString());
-        user.setEmail(email);
-        user.setProvider("email");
+        if (user.getEmail()==null) {
+            user.setEmail(email);
+        }
+        if (user.getProvider()==null){
+            user.setProvider("email");
+        }
         user.setBirthday(dataDeNacimento.getText().toString());
         user.setCidade(autoCompleteTextViewCidade.getText().toString());
-        user.setTipoSanguineo(spinnerTipoSanguineo.getSelectedItem().toString());
-        if (!radioGroupSexo.isSelected()){
+        user.setTipo_sanguineo(spinnerTipoSanguineo.getSelectedItem().toString());
+        int radioButtonID = radioGroupSexo.getCheckedRadioButtonId();
+        RadioButton radioButton = (RadioButton) radioGroupSexo.findViewById(radioButtonID);
+        String selectedtext = (String) radioButton.getText();
+
+        if (selectedtext == null){
             user.setGender("indefinido");
         }else{
-            int radioButtonID = radioGroupSexo.getCheckedRadioButtonId();
-            RadioButton radioButton = (RadioButton) radioGroupSexo.findViewById(radioButtonID);
-            String selectedtext = (String) radioButton.getText();
             user.setGender(selectedtext);
         }
 
 
-        //create user
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        showProgressDialog();
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
+        if (!editando && FirebaseAuth.getInstance().getCurrentUser() == null) {
+            //create user
+            auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            showProgressDialog();
+                            if (!task.isSuccessful()) {
+                                hideProgressDialog();
+                                Toast.makeText(SignupActivity.this, "Já existe um usuário cadastrado com esse e-mail" + task.getException(),
+                                        Toast.LENGTH_SHORT).show();
 
-                            startActivity(new Intent(SignupActivity.this, MainActivity.class));
-                            finish();
+                            } else {
+                                user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                adicionarUsuario();
+                                startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                finish();
+                            }
                         }
-                    }
-                });
+                    });
+        }else{
+            atualizarUsuario();
+            finish();
+        }
     }
 
     private boolean validaForm() {
         boolean ret = true;
-        if (!Validador.validateNotNull(inputEmail, getString(R.string.val_email_empty))){
-            hideProgressDialog();
+        if (!editando && !Validador.validateNotNull(inputEmail, getString(R.string.val_email_empty))){
             ret = false;
-        }
-        if (!Validador.validateNotNull(inputPassword, getString(R.string.val_senha_empty))){
-            hideProgressDialog();
+        }else if (!editando && !Validador.validateNotNull(inputPassword, getString(R.string.val_senha_empty))){
             ret =  false;
-        }
-        if (!Validador.validateNotNull(edtNome, getString(R.string.informe_o_nome))){
-            hideProgressDialog();
+        }else if (!Validador.validateNotNull(edtNome, getString(R.string.informe_o_nome))){
             ret =  false;
-        }
-        if (!Validador.validateNotNull(edtSobrenome, getString(R.string.informe_o_sobrenome))){
-            hideProgressDialog();
+        }else if (!Validador.validateNotNull(edtSobrenome, getString(R.string.informe_o_sobrenome))){
             ret =  false;
-        }
-        if (inputPassword.getText().length() < 6) {
+        }else if (inputPassword.getText().length() < 6 && !editando ) {
             inputPassword.setError("A senha deve ter no minimo 6 Caracteres");
             ret = false;
-        }
-        if (autoCompleteTextViewCidade == null) {
+        }else if (autoCompleteTextViewCidade == null) {
             autoCompleteTextViewCidade.setError("Ops! Esqueceu de informar o bairro do cliente");
             autoCompleteTextViewCidade.setFocusable(true);
             autoCompleteTextViewCidade.requestFocus();
             ret = false;
-        }
-        if (inputPassword.getText() != inputPasswordConfirm.getText()){
+        }else if (!editando && !inputPassword.getText().toString().equals(inputPasswordConfirm.getText().toString())){
             inputPasswordConfirm.setError("As senhas não correspondem!");
             inputPasswordConfirm.requestFocus();
-        }
-        if (!spinnerTipoSanguineo.isSelected()){
-            Toast.makeText(this, "Informe seu tipo snguineo!", Toast.LENGTH_SHORT).show();
+            ret =false;
+        }else if (spinnerTipoSanguineo.getSelectedItem() == null){
+            Toast.makeText(this, "Informe seu tipo sanguineo!", Toast.LENGTH_SHORT).show();
             spinnerTipoSanguineo.requestFocus();
+            ret =false;
         }
-
-
         return ret;
     }
 
@@ -225,6 +267,24 @@ public class SignupActivity extends BaseActivity  {
         public void onDateSet(DatePicker view, int yy, int mm, int dd) {
             populateSetDate(yy, mm + 1, dd);
         }
+    }
+
+    private void adicionarUsuario() {
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mDatabase.child(user.getUid()).setValue(user.toMap());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+    private void atualizarUsuario(){
+        mDatabase.updateChildren(user.toMap());
     }
 
 

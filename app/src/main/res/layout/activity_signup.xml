@@ -20,7 +20,7 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="@dimen/activity_horizontal_margin">
@@ -37,13 +37,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/area_nombre"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/distancia_icone"
                     android:src="@drawable/ic_person_black_24px" />
 
                 <android.support.design.widget.TextInputLayout
@@ -56,88 +56,131 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/nome"
-                        android:inputType="textPersonName"
+                        android:inputType="textCapWords|textPersonName"
                         android:maxLines="1" />
 
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/area_nombre"
-            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_group_black_24px" />
-
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/edtSobrenome"
-                    style="@style/Widget.AppCompat.AutoCompleteTextView"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/sobrenome"
-                    android:inputType="textPersonName"
-                    android:maxLines="1" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/distancia_icone"
+                    android:src="@drawable/ic_group_black_24px" />
 
-            </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/edtSobrenome"
+                        style="@style/Widget.AppCompat.AutoCompleteTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/sobrenome"
+                        android:inputType="textCapWords|textPersonName"
+                        android:maxLines="1" />
+
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:id="@+id/layout_email"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/email"
-                    style="@style/Widget.AppCompat.AutoCompleteTextView"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/email"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/distancia_icone"
+                    android:src="@drawable/ic_email_black_24px" />
 
-            </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
+                    <EditText
+                        android:id="@+id/email"
+                        style="@style/Widget.AppCompat.AutoCompleteTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1" />
+
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_senha"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:focusableInTouchMode="true"
-                    android:hint="@string/hint_senha"
-                    android:imeActionId="@+id/login"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/distancia_icone"
+                    android:src="@drawable/ic_vpn_key_black_24px" />
 
-            </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
+                    <EditText
+                        android:id="@+id/password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/hint_senha"
+                        android:imeActionId="@+id/login"
+                        android:imeOptions="actionUnspecified"
+                        android:inputType="textPassword"
+                        android:maxLines="1" />
+
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_confirmar_senha"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/confirm_password"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:focusableInTouchMode="true"
-                    android:hint="@string/hint_confirm_senha"
-                    android:imeActionId="@+id/login"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/distancia_icone"
+                    android:src="@drawable/ic_security_black_24px" />
 
-            </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <EditText
+                        android:id="@+id/confirm_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/hint_confirm_senha"
+                        android:imeActionId="@+id/login"
+                        android:imeOptions="actionUnspecified"
+                        android:inputType="textPassword"
+                        android:maxLines="1" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -147,6 +190,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
                     android:orientation="vertical">
 
                     <TextView
@@ -186,7 +230,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingLeft="30dp">
+                    android:paddingLeft="30dp"
+                    tools:ignore="RtlSymmetry">
 
 
                     <TextView
@@ -205,6 +250,17 @@
                         android:entries="@array/array_tipo_sangineo" />
                 </LinearLayout>
             </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/distancia_icone"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_date_range_black_24px" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -224,6 +280,18 @@
                     <!--<requestFocus />-->
                 </EditText>
             </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/distancia_icone"
+                android:src="@drawable/ic_location_city_black_24px" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -233,8 +301,10 @@
                     android:id="@+id/autoCompleteTextViewCidade"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textCapWords|textPersonName"
                     android:hint="@string/cidade" />
             </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
 
             <Button
                 android:id="@+id/sign_up_button"

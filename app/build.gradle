@@ -30,28 +30,29 @@ dependencies {
 //        exclude group: 'com.android.support', module: 'support-annotations'
 //    })
     //Android
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //faribase
-    compile 'com.google.firebase:firebase-auth:10.2.0'
-    compile 'com.google.firebase:firebase-database:10.2.0'
-    compile 'com.google.firebase:firebase-storage:10.2.0'
-    compile 'com.google.firebase:firebase-crash:10.2.0'
     //Facebook
-    compile 'com.facebook.android:facebook-android-sdk:4.20.0'
     //glide
-    compile 'com.github.bumptech.glide:glide:3.7.0'
     //play service
-    compile 'com.google.android.gms:play-services-auth:10.2.0'
-//    compile 'com.google.android.gms:play-services-plus:10.2.0'
-//    //google
+    //    //google
 //    compile 'com.google.api-client:google-api-client:1.22.0'
 //    compile 'com.google.oauth-client:google-oauth-client-jetty:1.22.0'
 //    compile 'com.google.apis:google-api-services-people:v1-rev77-1.22.0'
 
 
-    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.firebase:firebase-auth:10.2.0'
+    compile 'com.google.firebase:firebase-database:10.2.0'
+    compile 'com.google.firebase:firebase-storage:10.2.0'
+    compile 'com.google.firebase:firebase-crash:10.2.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.20.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.google.android.gms:play-services-auth:10.2.0'
+    compile 'com.google.android.gms:play-services-maps:10.2.0'
     compile 'org.jetbrains:annotations-java5:15.0'
+    compile 'com.android.support:support-v4:25.3.0'
+    testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'
