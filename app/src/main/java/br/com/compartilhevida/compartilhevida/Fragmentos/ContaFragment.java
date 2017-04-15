@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +20,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 import br.com.compartilhevida.compartilhevida.Entidades.User;
+import br.com.compartilhevida.compartilhevida.LoginActivity;
 import br.com.compartilhevida.compartilhevida.R;
 import br.com.compartilhevida.compartilhevida.SignupActivity;
 
@@ -33,14 +36,8 @@ public class ContaFragment extends Fragment {
     private ProgressBar progressBar;
     private FirebaseUser userFirebase;
     private FirebaseAuth mAuth;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static DatabaseReference mUserDatabase = null;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -48,27 +45,20 @@ public class ContaFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ContaFragment newInstance(String param1, String param2) {
+    public static ContaFragment newInstance(DatabaseReference param1) {
         ContaFragment fragment = new ContaFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        mUserDatabase =  param1;
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View viewConta =  inflater.inflate(R.layout.fragment_conta, container, false);
         userFirebase = FirebaseAuth.getInstance().getCurrentUser();
@@ -90,8 +80,11 @@ public class ContaFragment extends Fragment {
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
-
-        if (!User.getInstance(getActivity().getApplication().getApplicationContext()).getProvider().equalsIgnoreCase("email")){
+        if(User.getInstance(getActivity().getApplication().getApplicationContext()).getProvider()!= null) {
+            if (!User.getInstance(getActivity().getApplication().getApplicationContext()).getProvider().equalsIgnoreCase("email")) {
+                btnSendResetEmail.setVisibility(View.GONE);
+            }
+        }else{
             btnSendResetEmail.setVisibility(View.GONE);
         }
 
@@ -133,15 +126,15 @@ public class ContaFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
+                mUserDatabase.removeValue();
                 if (userFirebase != null) {
                     userFirebase.delete()
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(getActivity(), "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(getActivity(), SignupActivity.class));
-
+                                        Toast.makeText(getActivity(), "Seu perfil foi excluído!", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(getActivity(), LoginActivity.class));
                                         progressBar.setVisibility(View.GONE);
                                     } else {
                                         Toast.makeText(getActivity(), "Failed to delete your account!", Toast.LENGTH_SHORT).show();

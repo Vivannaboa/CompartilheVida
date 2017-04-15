@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/white"
+    android:background="@color/mWhite"
     tools:context="br.com.compartilhevida.compartilhevida.LoginActivity">
 
 <ScrollView
-    android:background="@color/white"
+    android:background="@color/mWhite"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/mWhite"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin"
@@ -83,7 +83,8 @@
                 android:background="@color/colorAccent"
                 android:text="@string/btn_link_to_register"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                tools:ignore="ButtonStyle" />
 
             <!-- Login Button -->
             <Button
@@ -95,7 +96,8 @@
                 android:layout_weight="1"
                 android:background="@color/colorAccent"
                 android:text="@string/btn_login"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                tools:ignore="ButtonStyle" />
 
         </LinearLayout>
 

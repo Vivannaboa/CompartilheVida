@@ -18,7 +18,7 @@ public class User {
     private String last_name;
     private String email;
     private String provider;
-    private String urlPhoto;
+    private String url_photo;
     private String birthday;
     private String gender;
     private String tipo_sanguineo;
@@ -45,7 +45,7 @@ public class User {
         result.put("first_name", first_name);
         result.put("last_name", last_name);
         result.put("email", email);
-        result.put("urlPhoto",urlPhoto);
+        result.put("url_photo",url_photo);
         result.put("gender", gender);
         result.put("provider",provider);
         result.put("birthday",birthday);
@@ -96,11 +96,11 @@ public class User {
     }
 
     public String getUrlPhoto() {
-        return urlPhoto;
+        return url_photo;
     }
 
     public void setUrlPhoto(String urlPhoto) {
-        this.urlPhoto = urlPhoto;
+        this.url_photo = urlPhoto;
     }
 
     public String getBirthday() {

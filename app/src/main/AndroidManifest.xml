@@ -40,6 +40,8 @@
             android:label="@string/title_activity_reset_password"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity android:name=".NewPostActivity"
+            android:theme="@style/DialogTheme" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
