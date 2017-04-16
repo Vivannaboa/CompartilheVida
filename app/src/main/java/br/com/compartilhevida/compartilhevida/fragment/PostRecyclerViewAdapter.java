@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Fragmentos;
+package br.com.compartilhevida.compartilhevida.fragment;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import br.com.compartilhevida.compartilhevida.Fragmentos.PostFragment.OnListFragmentInteractionListener;
-import br.com.compartilhevida.compartilhevida.Fragmentos.dummy.DummyContent.DummyItem;
+import br.com.compartilhevida.compartilhevida.fragment.PostFragment.OnListFragmentInteractionListener;
+import br.com.compartilhevida.compartilhevida.fragment.dummy.DummyContent.DummyItem;
 import br.com.compartilhevida.compartilhevida.R;
 
 import java.util.List;

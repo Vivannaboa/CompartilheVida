@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Utilitarios;
+package br.com.compartilhevida.compartilhevida.util;
 
 import android.text.Editable;
 import android.text.TextUtils;

@@ -8,14 +8,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -33,8 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
-import br.com.compartilhevida.compartilhevida.Entidades.User;
-import br.com.compartilhevida.compartilhevida.Utilitarios.Validador;
+import br.com.compartilhevida.compartilhevida.models.Usuario;
+import br.com.compartilhevida.compartilhevida.util.Validador;
 
 public class SignupActivity extends BaseActivity  {
     private EditText inputEmail, inputPassword, inputPasswordConfirm, edtNome, edtSobrenome;
@@ -47,7 +44,7 @@ public class SignupActivity extends BaseActivity  {
     private ArrayAdapter<String> autoComplete;
     private boolean editando;
     ArrayAdapter<CharSequence> adapter;
-    User user;
+    Usuario mUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +58,8 @@ public class SignupActivity extends BaseActivity  {
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
         recuperacomponentes();
-        user = User.getInstance(getBaseContext());
-        if (user.getEmail()!=null){
+        mUsuario = Usuario.getInstance(getBaseContext());
+        if (mUsuario.getEmail()!=null){
             recuperarDadosDoUsuarioParaComponentes();
             editando =true;
         }
@@ -90,26 +87,26 @@ public class SignupActivity extends BaseActivity  {
     }
 
     private void recuperarDadosDoUsuarioParaComponentes() {
-        dataDeNacimento.setText(user.getBirthday());
+        dataDeNacimento.setText(mUsuario.getBirthday());
         findViewById(R.id.layout_email).setVisibility(View.GONE);
         findViewById(R.id.layout_senha).setVisibility(View.GONE);
         findViewById(R.id.layout_confirmar_senha).setVisibility(View.GONE);
         findViewById(R.id.btn_reset_password).setVisibility(View.GONE);
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-        if (user.getGender()!=null) {
-            if (user.getGender().toString().equalsIgnoreCase("Masculino")) {
+        if (mUsuario.getGender()!=null) {
+            if (mUsuario.getGender().toString().equalsIgnoreCase("Masculino")) {
                 RadioButton rb1 = (RadioButton) findViewById(R.id.radioButtonMasculino);
                 rb1.setChecked(true);
-            } else if (user.getGender().toString().equalsIgnoreCase("Femenino")) {
+            } else if (mUsuario.getGender().toString().equalsIgnoreCase("Femenino")) {
                 RadioButton rb1 = (RadioButton) findViewById(R.id.radioButtonFeminino);
                 rb1.setChecked(true);
             }
         }
-        autoCompleteTextViewCidade.setText(user.getCidade());
-        edtNome.setText(user.getFirst_name());
-        edtSobrenome.setText(user.getLast_name());
+        autoCompleteTextViewCidade.setText(mUsuario.getCidade());
+        edtNome.setText(mUsuario.getFirst_name());
+        edtSobrenome.setText(mUsuario.getLast_name());
         if (spinnerTipoSanguineo!=null) {
-            spinnerTipoSanguineo.setSelection(adapter.getPosition(user.getTipo_sanguineo()));
+            spinnerTipoSanguineo.setSelection(adapter.getPosition(mUsuario.getTipo_sanguineo()));
         }
 
     }
@@ -159,25 +156,25 @@ public class SignupActivity extends BaseActivity  {
 
         String email = inputEmail.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
-        user.setFirst_name(edtNome.getText().toString());
-        user.setLast_name(edtSobrenome.getText().toString());
-        if (user.getEmail()==null) {
-            user.setEmail(email);
+        mUsuario.setFirst_name(edtNome.getText().toString());
+        mUsuario.setLast_name(edtSobrenome.getText().toString());
+        if (mUsuario.getEmail()==null) {
+            mUsuario.setEmail(email);
         }
-        if (user.getProvider()==null){
-            user.setProvider("email");
+        if (mUsuario.getProvider()==null){
+            mUsuario.setProvider("email");
         }
-        user.setBirthday(dataDeNacimento.getText().toString());
-        user.setCidade(autoCompleteTextViewCidade.getText().toString());
-        user.setTipo_sanguineo(spinnerTipoSanguineo.getSelectedItem().toString());
+        mUsuario.setBirthday(dataDeNacimento.getText().toString());
+        mUsuario.setCidade(autoCompleteTextViewCidade.getText().toString());
+        mUsuario.setTipo_sanguineo(spinnerTipoSanguineo.getSelectedItem().toString());
         int radioButtonID = radioGroupSexo.getCheckedRadioButtonId();
         RadioButton radioButton = (RadioButton) radioGroupSexo.findViewById(radioButtonID);
         String selectedtext = (String) radioButton.getText();
 
         if (selectedtext == null){
-            user.setGender("indefinido");
+            mUsuario.setGender("indefinido");
         }else{
-            user.setGender(selectedtext);
+            mUsuario.setGender(selectedtext);
         }
 
 
@@ -194,7 +191,7 @@ public class SignupActivity extends BaseActivity  {
                                         Toast.LENGTH_SHORT).show();
 
                             } else {
-                                user.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                mUsuario.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                 adicionarUsuario();
                                 startActivity(new Intent(SignupActivity.this, MainActivity.class));
                                 finish();
@@ -273,7 +270,7 @@ public class SignupActivity extends BaseActivity  {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mDatabase.child(user.getUid()).setValue(user.toMap());
+                mDatabase.child(mUsuario.getUid()).setValue(mUsuario.toMap());
             }
 
             @Override
@@ -284,7 +281,7 @@ public class SignupActivity extends BaseActivity  {
 
     }
     private void atualizarUsuario(){
-        mDatabase.updateChildren(user.toMap());
+        mDatabase.updateChildren(mUsuario.toMap());
     }
 
 

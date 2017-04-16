@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Viewholder;
+package br.com.compartilhevida.compartilhevida.viewholder;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,9 +8,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import br.com.compartilhevida.compartilhevida.Entidades.Post;
+import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.R;
-import br.com.compartilhevida.compartilhevida.Utilitarios.CircleTransform;
+import br.com.compartilhevida.compartilhevida.util.CircleTransform;
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
 

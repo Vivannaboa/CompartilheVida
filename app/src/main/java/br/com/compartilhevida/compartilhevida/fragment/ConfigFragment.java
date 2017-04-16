@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Fragmentos;
+package br.com.compartilhevida.compartilhevida.fragment;
 
 
 import android.app.Fragment;

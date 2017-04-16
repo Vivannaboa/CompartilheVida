@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Fragmentos.dummy;
+package br.com.compartilhevida.compartilhevida.fragment.dummy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

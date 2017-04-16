@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Fragmentos.Post;
+package br.com.compartilhevida.compartilhevida.fragment.Post;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,9 +19,9 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
-import br.com.compartilhevida.compartilhevida.Entidades.Post;
+import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.R;
-import br.com.compartilhevida.compartilhevida.Viewholder.PostViewHolder;
+import br.com.compartilhevida.compartilhevida.viewholder.PostViewHolder;
 
 public abstract class PostListFragment extends Fragment {
 
@@ -84,7 +84,7 @@ public abstract class PostListFragment extends Fragment {
                 });
 
                 // Determine if the current user has liked this post and set UI accordingly
-                if (model.getStars().containsKey(getUid())) {
+                if (model.getCoracao().containsKey(getUid())) {
                     viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
                 } else {
                     viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
@@ -118,14 +118,14 @@ public abstract class PostListFragment extends Fragment {
                     return Transaction.success(mutableData);
                 }
 
-                if (p.getStars().containsKey(getUid())) {
+                if (p.getCoracao().containsKey(getUid())) {
                     // Unstar the post and remove self from stars
-                    p.setStarCount(p.getStarCount() - 1);
-                    p.getStars().remove(getUid());
+                    p.setCoracaoCount(p.getCoracaoCount() - 1);
+                    p.getCoracao().remove(getUid());
                 } else {
                     // Star the post and add self to stars
-                    p.setStarCount(p.getStarCount() + 1);
-                    p.getStars().put(getUid(), true);
+                    p.setCoracaoCount(p.getCoracaoCount() + 1);
+                    p.getCoracao().put(getUid(), true);
                 }
 
                 // Set value and report transaction success

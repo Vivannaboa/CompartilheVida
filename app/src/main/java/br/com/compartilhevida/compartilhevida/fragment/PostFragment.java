@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Fragmentos;
+package br.com.compartilhevida.compartilhevida.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -21,11 +21,10 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
-import br.com.compartilhevida.compartilhevida.Entidades.Post;
+import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.R;
-import br.com.compartilhevida.compartilhevida.Fragmentos.dummy.DummyContent;
-import br.com.compartilhevida.compartilhevida.Fragmentos.dummy.DummyContent.DummyItem;
-import br.com.compartilhevida.compartilhevida.Viewholder.PostViewHolder;
+import br.com.compartilhevida.compartilhevida.fragment.dummy.DummyContent.DummyItem;
+import br.com.compartilhevida.compartilhevida.viewholder.PostViewHolder;
 
 
 public class PostFragment extends Fragment {

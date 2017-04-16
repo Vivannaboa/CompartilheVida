@@ -1,11 +1,10 @@
-package br.com.compartilhevida.compartilhevida.Fragmentos;
+package br.com.compartilhevida.compartilhevida.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
-import br.com.compartilhevida.compartilhevida.Entidades.User;
+import br.com.compartilhevida.compartilhevida.models.Usuario;
 import br.com.compartilhevida.compartilhevida.LoginActivity;
 import br.com.compartilhevida.compartilhevida.R;
-import br.com.compartilhevida.compartilhevida.SignupActivity;
 
 
 public class ContaFragment extends Fragment {
@@ -80,8 +78,8 @@ public class ContaFragment extends Fragment {
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
-        if(User.getInstance(getActivity().getApplication().getApplicationContext()).getProvider()!= null) {
-            if (!User.getInstance(getActivity().getApplication().getApplicationContext()).getProvider().equalsIgnoreCase("email")) {
+        if(Usuario.getInstance(getActivity().getApplication().getApplicationContext()).getProvider()!= null) {
+            if (!Usuario.getInstance(getActivity().getApplication().getApplicationContext()).getProvider().equalsIgnoreCase("email")) {
                 btnSendResetEmail.setVisibility(View.GONE);
             }
         }else{

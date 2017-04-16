@@ -3,13 +3,11 @@ package br.com.compartilhevida.compartilhevida;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -52,8 +50,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
-import br.com.compartilhevida.compartilhevida.Entidades.User;
-import br.com.compartilhevida.compartilhevida.Utilitarios.Validador;
+import br.com.compartilhevida.compartilhevida.models.Usuario;
+import br.com.compartilhevida.compartilhevida.util.Validador;
 
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -68,7 +66,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     public static GoogleApiClient mGoogleApiClient;
-    private User user;
+    private Usuario user;
 
 
     @Override
@@ -127,7 +125,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 Toast.makeText(getApplicationContext(), "Ops, não foi possivel logar com o Facebook ", Toast.LENGTH_SHORT).show();
             }
         });
-        user = User.getInstance(getBaseContext());
+        user = Usuario.getInstance(getBaseContext());
         mAuthListener = getFirebaseAuthResultHandler();
 
     }
@@ -154,9 +152,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         return (callback);
     }
 
-    private boolean isNameOk(User user, FirebaseUser firebaseUser) {
+    private boolean isNameOk(Usuario mUsuario, FirebaseUser firebaseUser) {
         return (
-                user.getFirst_name() != null
+                mUsuario.getFirst_name() != null
                         || firebaseUser.getDisplayName() != null
         );
     }

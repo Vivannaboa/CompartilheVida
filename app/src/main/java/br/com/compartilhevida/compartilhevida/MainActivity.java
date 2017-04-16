@@ -30,12 +30,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import br.com.compartilhevida.compartilhevida.Entidades.User;
-import br.com.compartilhevida.compartilhevida.Fragmentos.ConfigFragment;
-import br.com.compartilhevida.compartilhevida.Fragmentos.ContaFragment;
-import br.com.compartilhevida.compartilhevida.Fragmentos.PostFragment;
-import br.com.compartilhevida.compartilhevida.Fragmentos.dummy.DummyContent;
-import br.com.compartilhevida.compartilhevida.Utilitarios.CircleTransform;
+import br.com.compartilhevida.compartilhevida.models.Usuario;
+import br.com.compartilhevida.compartilhevida.fragment.ConfigFragment;
+import br.com.compartilhevida.compartilhevida.fragment.ContaFragment;
+import br.com.compartilhevida.compartilhevida.fragment.PostFragment;
+import br.com.compartilhevida.compartilhevida.fragment.dummy.DummyContent;
+import br.com.compartilhevida.compartilhevida.util.CircleTransform;
 
 public class MainActivity extends BaseActivity
         implements
@@ -48,7 +48,7 @@ public class MainActivity extends BaseActivity
     // Firebase instance variables
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth mAuth;
-    private User user;
+    private Usuario mUsuario;
     FirebaseUser userFirebase;
     private DatabaseReference mUserDatabase;
     ValueEventListener mUserEventListener;
@@ -61,7 +61,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = User.getInstance(getBaseContext());
+        mUsuario = Usuario.getInstance(getBaseContext());
 
         //get firebase auth instance
         mAuth = FirebaseAuth.getInstance();
@@ -116,15 +116,15 @@ public class MainActivity extends BaseActivity
 
     private boolean verificaDadosPendendtes() {
         boolean ret = true;
-        if (user.getBirthday() == null) {
+        if (mUsuario.getBirthday() == null) {
 
             ret = false;
         }
-        if (user.getGender() == null) {
+        if (mUsuario.getGender() == null) {
 
             ret = false;
         }
-        if (user.getTipo_sanguineo() == null) {
+        if (mUsuario.getTipo_sanguineo() == null) {
 
             ret = false;
         }
@@ -147,18 +147,18 @@ public class MainActivity extends BaseActivity
             mUserEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
-                    User usuario = snapshot.getValue(User.class);
+                    Usuario usuario = snapshot.getValue(Usuario.class);
 
                     if (usuario != null) {
-                        user.setGender(usuario.getGender());
-                        user.setFirst_name(usuario.getFirst_name());
-                        user.setLast_name(usuario.getLast_name());
-                        user.setUid(usuario.getUid());
-                        user.setEmail(usuario.getEmail());
-                        user.setBirthday(usuario.getBirthday());
-                        user.setCidade(usuario.getCidade());
-                        user.setTipo_sanguineo(usuario.getTipo_sanguineo());
-                        user.setProvider(usuario.getProvider());
+                        mUsuario.setGender(usuario.getGender());
+                        mUsuario.setFirst_name(usuario.getFirst_name());
+                        mUsuario.setLast_name(usuario.getLast_name());
+                        mUsuario.setUid(usuario.getUid());
+                        mUsuario.setEmail(usuario.getEmail());
+                        mUsuario.setBirthday(usuario.getBirthday());
+                        mUsuario.setCidade(usuario.getCidade());
+                        mUsuario.setTipo_sanguineo(usuario.getTipo_sanguineo());
+                        mUsuario.setProvider(usuario.getProvider());
                         carregaUsuario(usuario);
                         if (!verificaDadosPendendtes()) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -278,14 +278,14 @@ public class MainActivity extends BaseActivity
 
     }
 
-    private boolean isNameOk(User user, FirebaseUser firebaseUser) {
+    private boolean isNameOk(Usuario mUsuario, FirebaseUser firebaseUser) {
         return (
-                user.getFirst_name() != null
+                mUsuario.getFirst_name() != null
                         || firebaseUser.getDisplayName() != null
         );
     }
 
-    private void carregaUsuario(User user) {
+    private void carregaUsuario(Usuario user) {
         if (userFirebase != null) {
             if (userFirebase.getPhotoUrl() != null) {
                 final Uri uri = userFirebase.getPhotoUrl();

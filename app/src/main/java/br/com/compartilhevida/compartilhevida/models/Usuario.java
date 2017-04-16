@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.Entidades;
+package br.com.compartilhevida.compartilhevida.models;
 
 import android.content.Context;
 
@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class User {
-    private static User instance;
+public class Usuario {
+    private static Usuario instance;
     private Context context;
 
     private String uid;
@@ -23,18 +23,20 @@ public class User {
     private String gender;
     private String tipo_sanguineo;
     private String cidade;
+    private boolean recebeNotificcacao;
 
-    public static User getInstance(Context context) {
+
+    public static Usuario getInstance(Context context) {
         if (instance == null)
-            instance = new User(context);
+            instance = new Usuario(context);
         return instance;
     }
 
-    private User(Context context) {
+    private Usuario(Context context) {
         this.context = context;
 
     }
-    public User() {
+    public Usuario() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
@@ -133,5 +135,12 @@ public class User {
     }
     public String getTipo_sanguineo() {
         return tipo_sanguineo;
+    }
+    public boolean isRecebeNotificcacao() {
+        return recebeNotificcacao;
+    }
+
+    public void setRecebeNotificcacao(boolean recebeNotificcacao) {
+        this.recebeNotificcacao = recebeNotificcacao;
     }
 }

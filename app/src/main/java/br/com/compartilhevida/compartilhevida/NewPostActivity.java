@@ -1,10 +1,7 @@
 package br.com.compartilhevida.compartilhevida;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -24,9 +21,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.com.compartilhevida.compartilhevida.Entidades.Post;
-import br.com.compartilhevida.compartilhevida.Entidades.User;
-import br.com.compartilhevida.compartilhevida.Utilitarios.CircleTransform;
+import br.com.compartilhevida.compartilhevida.models.Post;
+import br.com.compartilhevida.compartilhevida.models.Usuario;
+import br.com.compartilhevida.compartilhevida.util.CircleTransform;
 
 public class NewPostActivity extends BaseActivity {
 
@@ -41,7 +38,7 @@ public class NewPostActivity extends BaseActivity {
     private EditText mTitleField;
     private EditText mBodyField;
     private FloatingActionButton mSubmitButton;
-    private User mUser;
+    private Usuario mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +48,7 @@ public class NewPostActivity extends BaseActivity {
         // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
-        mUser  = User.getInstance(this);
+        mUser  = Usuario.getInstance(this);
 
         mPhotoUser = (ImageView) findViewById(R.id.post_author_photo);
         mNomeUser = (TextView) findViewById(R.id.post_author);
@@ -111,7 +108,7 @@ public class NewPostActivity extends BaseActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
-                        User user = dataSnapshot.getValue(User.class);
+                        Usuario user = dataSnapshot.getValue(Usuario.class);
 
                         // [START_EXCLUDE]
                         if (user == null) {
@@ -157,7 +154,7 @@ public class NewPostActivity extends BaseActivity {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body,urlPhoto);
+        Post post = new Post(userId, username, title, body,urlPhoto, tipo);
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
