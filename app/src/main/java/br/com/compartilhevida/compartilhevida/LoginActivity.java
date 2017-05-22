@@ -1,8 +1,11 @@
 package br.com.compartilhevida.compartilhevida;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -67,11 +70,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private FirebaseAuth mAuth;
     public static GoogleApiClient mGoogleApiClient;
     private Usuario user;
-
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
@@ -125,7 +130,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 Toast.makeText(getApplicationContext(), "Ops, não foi possivel logar com o Facebook ", Toast.LENGTH_SHORT).show();
             }
         });
-        user = Usuario.getInstance(getBaseContext());
+        user = Usuario.getInstance();
         mAuthListener = getFirebaseAuthResultHandler();
 
     }
@@ -264,7 +269,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStart() {
         super.onStart();
-
         if (mAuth.getCurrentUser() != null) {
             onAuthSuccess(mAuth.getCurrentUser());
         }
@@ -452,5 +456,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         return bundle;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 }
 

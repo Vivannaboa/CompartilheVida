@@ -1,60 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:fillViewport="true">  <!-- FillViewport ensures the scrollview doesn't wrap the content -->
 
     <LinearLayout
-        android:id="@+id/layout_post"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="9dp"
-        android:orientation="horizontal"
-        android:padding="5dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="ScrollViewSize">
 
-        <include
-            android:id="@+id/post_author_layout"
-            layout="@layout/include_post_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="RtlHardcoded" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <include
-            layout="@layout/include_post_edtxt"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/layout_post"
-            android:layout_marginTop="10dp" />
-    </LinearLayout>
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_post"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary">
+
+                <ImageView
+                    android:id="@+id/toolbar_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/post_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="fill_vertical"
+                    android:hint="Nome do usuário"
+                    android:paddingStart="10dp" />
+            </android.support.v7.widget.Toolbar>
 
 
-    <include layout="@layout/util_horizontal_line_section" />
+        </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/mWhite"
-            android:elevation="6dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
 
-    </android.support.design.widget.AppBarLayout>
+            <EditText
+                android:id="@+id/edtBodyField"
+                style="@style/FullWidthEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:ems="10"
+                android:hint="Escreva alguma coisa..."
+                android:imeOptions="actionSend|flagNoExtractUi"
+                android:inputType="textCapSentences|textMultiLine|textShortMessage|textLongMessage"
+                android:minHeight="48dp"
+                android:minLines="1"
+                tools:ignore="HardcodedText,LabelFor,ObsoleteLayoutParam,RtlHardcoded" />
 
-</LinearLayout>
+            <requestFocus />
+        </LinearLayout>
+        <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/m_toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@android:color/white"-->
+        <!--app:layout_collapseMode="pin" />-->
+    </LinearLayout>
+</ScrollView>

@@ -58,7 +58,7 @@ public class SignupActivity extends BaseActivity  {
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
         recuperacomponentes();
-        mUsuario = Usuario.getInstance(getBaseContext());
+        mUsuario = Usuario.getInstance();
         if (mUsuario.getEmail()!=null){
             recuperarDadosDoUsuarioParaComponentes();
             editando =true;

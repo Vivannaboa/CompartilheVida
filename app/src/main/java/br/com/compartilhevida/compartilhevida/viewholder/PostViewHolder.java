@@ -34,12 +34,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindToPost(Post post, View.OnClickListener starClickListener) {
-        titleView.setText(post.getTitle());
-        authorView.setText(post.getAuthor());
-        numStarsView.setText(String.valueOf(post.getStarCount()));
-        bodyView.setText(post.getBody());
-        if (post.getUrlPhoto()!=null) {
-            Glide.with(context).load(post.getUrlPhoto()).transform(new CircleTransform(context)).into(imageView);
+        authorView.setText(post.getAutor());
+        numStarsView.setText(String.valueOf(post.getCoracaoCount()));
+        bodyView.setText(post.getMensagem());
+        if (post.getUrlFoto()!=null) {
+            Glide.with(context).load(post.getUrlFoto()).transform(new CircleTransform(context)).into(imageView);
         }
         starView.setOnClickListener(starClickListener);
     }

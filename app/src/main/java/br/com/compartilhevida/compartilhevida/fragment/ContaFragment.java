@@ -78,8 +78,8 @@ public class ContaFragment extends Fragment {
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
-        if(Usuario.getInstance(getActivity().getApplication().getApplicationContext()).getProvider()!= null) {
-            if (!Usuario.getInstance(getActivity().getApplication().getApplicationContext()).getProvider().equalsIgnoreCase("email")) {
+        if(Usuario.getInstance().getProvider()!= null) {
+            if (!Usuario.getInstance().getProvider().equalsIgnoreCase("email")) {
                 btnSendResetEmail.setVisibility(View.GONE);
             }
         }else{

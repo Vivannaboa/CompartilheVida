@@ -19,9 +19,10 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
-import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.R;
+import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.viewholder.PostViewHolder;
+
 
 public abstract class PostListFragment extends Fragment {
 
@@ -38,8 +39,7 @@ public abstract class PostListFragment extends Fragment {
     public PostListFragment() {}
 
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
+    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
 
@@ -85,9 +85,9 @@ public abstract class PostListFragment extends Fragment {
 
                 // Determine if the current user has liked this post and set UI accordingly
                 if (model.getCoracao().containsKey(getUid())) {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
+                    viewHolder.starView.setImageResource(R.drawable.ic_favorite_red_24dp);
                 } else {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                    viewHolder.starView.setImageResource(R.drawable.ic_favorite_border_red_24dp);
                 }
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
@@ -106,7 +106,9 @@ public abstract class PostListFragment extends Fragment {
             }
         };
         mRecycler.setAdapter(mAdapter);
+
     }
+
 
     // [START post_stars_transaction]
     private void onStarClicked(DatabaseReference postRef) {
@@ -120,11 +122,11 @@ public abstract class PostListFragment extends Fragment {
 
                 if (p.getCoracao().containsKey(getUid())) {
                     // Unstar the post and remove self from stars
-                    p.setCoracaoCount(p.getCoracaoCount() - 1);
+                    p.setCoracaoCount(p.getCoracaoCount() -1);
                     p.getCoracao().remove(getUid());
                 } else {
                     // Star the post and add self to stars
-                    p.setCoracaoCount(p.getCoracaoCount() + 1);
+                    p.setCoracaoCount(p.getCoracaoCount() +1);
                     p.getCoracao().put(getUid(), true);
                 }
 

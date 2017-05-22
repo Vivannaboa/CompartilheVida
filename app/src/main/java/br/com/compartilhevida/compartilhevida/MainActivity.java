@@ -1,22 +1,31 @@
 package br.com.compartilhevida.compartilhevida;
 
+import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -30,81 +39,136 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+
+import br.com.compartilhevida.compartilhevida.fragment.Post.MyPostsFragment;
+import br.com.compartilhevida.compartilhevida.fragment.Post.RecentPostsFragment;
 import br.com.compartilhevida.compartilhevida.models.Usuario;
-import br.com.compartilhevida.compartilhevida.fragment.ConfigFragment;
-import br.com.compartilhevida.compartilhevida.fragment.ContaFragment;
-import br.com.compartilhevida.compartilhevida.fragment.PostFragment;
-import br.com.compartilhevida.compartilhevida.fragment.dummy.DummyContent;
 import br.com.compartilhevida.compartilhevida.util.CircleTransform;
+
+import static android.view.animation.AnimationUtils.loadAnimation;
 
 public class MainActivity extends BaseActivity
         implements
         NavigationView.OnNavigationItemSelectedListener,
-        GoogleApiClient.OnConnectionFailedListener,
-        ContaFragment.OnFragmentInteractionListener,
-        PostFragment.OnListFragmentInteractionListener
-{
+        GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 10;
+    private static final String TAG = "MainActivity";
 
     // Firebase instance variables
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth mAuth;
     private Usuario mUsuario;
-    FirebaseUser userFirebase;
+    private FirebaseUser userFirebase;
     private DatabaseReference mUserDatabase;
-    ValueEventListener mUserEventListener;
-    ImageView imageView;
-    TextView usuario;
-    TextView email;
-    private Fragment currentFragment;
+    private ValueEventListener mUserEventListener;
+    private ImageView imageView;
+    private TextView usuario;
+    private TextView email;
 
+    //floating botton
+    public FloatingActionButton fab;
+    public LinearLayout fab1;
+    public LinearLayout fab2;
+    public FrameLayout frameFlatButtom;
+
+    //Animations
+    private Animation show_fab_1;
+    private Animation hide_fab_1;
+    private Animation show_fab_2;
+    private Animation hide_fab_2;
+
+    //flag que controla se os botões fabs estão abertos
+    private boolean FAB_Status = false;
+
+    private FragmentPagerAdapter mPagerAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUsuario = Usuario.getInstance(getBaseContext());
+
+        mUsuario = Usuario.getInstance();
 
         //get firebase auth instance
         mAuth = FirebaseAuth.getInstance();
+
         //get current user
         userFirebase = FirebaseAuth.getInstance().getCurrentUser();
+        //adiciona listner que verifica se tem um usuário logado
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser userFirebase = firebaseAuth.getCurrentUser();
                 if (userFirebase == null) {
+                    //se não tem nenhum usuário logado abre a tela de loguin
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();
                 }
             }
         };
 
-        //pega o usuário do banco
+        //o usuário do firebase só tem os dados básicos então vamos no banco pegar o restante
         if (userFirebase != null) {
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
         }
-
+        //agora que esta tudo certo com o usuário vamos carregar o layout
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
 
-        currentFragment = getFragmentManager().findFragmentById(R.id.content);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // Cria um adapter para inflar as tabs
+        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            private final android.support.v4.app.Fragment[] mFragments = new android.support.v4.app.Fragment[] {
+                    new RecentPostsFragment(),
+                    new MyPostsFragment()
+            };
+            private final String[] mFragmentNames = new String[] {
+                    getString(R.string.heading_recent),
+                    getString(R.string.heading_my_posts)
+            };
             @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, NewPostActivity.class));
-//                PostDialogFragment dialog = PostDialogFragment.newInstance();
-//                dialog.show(getSupportFragmentManager(), "LicensesDialog");
+            public android.support.v4.app.Fragment getItem(int position) {
+                return mFragments[position];
             }
-        });
+            @Override
+            public int getCount() {
+                return mFragments.length;
+            }
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return mFragmentNames[position];
+            }
+        };
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mPagerAdapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
+        //Floating Action Buttons
+        frameFlatButtom = (FrameLayout) findViewById(R.id.frameFlatButtom);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab1 = (LinearLayout) findViewById(R.id.fab_1);
+        fab2 = (LinearLayout) findViewById(R.id.fab_2);
+
+        //Animations
+        show_fab_1 = loadAnimation(getApplication(), R.anim.fab1_show);
+        hide_fab_1 = loadAnimation(getApplication(), R.anim.fab1_hide);
+        show_fab_2 = loadAnimation(getApplication(), R.anim.fab2_show);
+        hide_fab_2 = loadAnimation(getApplication(), R.anim.fab2_hide);
+        fab.setOnClickListener(this);
+
+
+        //carrega o layout do menu lateral
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View hView = navigationView.getHeaderView(0);
@@ -117,15 +181,12 @@ public class MainActivity extends BaseActivity
     private boolean verificaDadosPendendtes() {
         boolean ret = true;
         if (mUsuario.getBirthday() == null) {
-
             ret = false;
         }
         if (mUsuario.getGender() == null) {
-
             ret = false;
         }
         if (mUsuario.getTipo_sanguineo() == null) {
-
             ret = false;
         }
         return ret;
@@ -140,15 +201,17 @@ public class MainActivity extends BaseActivity
 
     }
 
+
+
     @Override
     public void onStart() {
         super.onStart();
+
         if (mUserDatabase!=null) {
             mUserEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     Usuario usuario = snapshot.getValue(Usuario.class);
-
                     if (usuario != null) {
                         mUsuario.setGender(usuario.getGender());
                         mUsuario.setFirst_name(usuario.getFirst_name());
@@ -179,21 +242,18 @@ public class MainActivity extends BaseActivity
                             });
                             AlertDialog dialog = builder.create();
                             dialog.show();
-
                         }
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
                 }
 
             };
             mUserDatabase.addValueEventListener(mUserEventListener);
         }
         mAuth.addAuthStateListener(authListener);
-
     }
 
     @Override
@@ -226,16 +286,6 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -245,32 +295,63 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.containerView,PostFragment.newInstance(1),"Post")
-                    .commit();
+        if (id == R.id.nav_doacao) {
+            permissionReadContat();
+        } else if (id == R.id.nav_hemocentros) {
 
-        } else if (id == R.id.nav_gallery) {
             //startActivity(new Intent(MainActivity.this, MapsActivity.class));
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_cartilha_doador) {
 
         } else if (id == R.id.nav_config) {
 
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.containerView, new ConfigFragment(),"Config")
-                    .commit();
+//            getFragmentManager()
+//                    .beginTransaction()
+//                    .replace(R.id.containerView, new ConfigFragment(),"Config")
+//                    .commit();
         } else if (id == R.id.nav_conta) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.containerView, ContaFragment.newInstance(mUserDatabase),"Conta")
-                    .commit();
+//            getFragmentManager()
+//                    .beginTransaction()
+//                    .replace(R.id.containerView, ContaFragment.newInstance(mUserDatabase),"Conta")
+//                    .commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void permissionReadContat() {
+        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_CONTACTS)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_CONTACTS},
+                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+        }else{
+           //Aqui deu certo
+        }
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    //Aqui o usuário permitiu o acesso.
+                }else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_CONTACTS)){
+                        new AlertDialog.Builder(this).
+                                setTitle("Permissão para ler contatos").
+                                setMessage("Você precisa conceder permissão de leitura de contatos para usar o" +
+                                        " recurso de leitura de contatos. Tente novamente e conceda-lhe!").show();
+                    }else{
+                        new AlertDialog.Builder(this).
+                                setTitle("Permissão de leitura dos contatos não concedida").
+                                setMessage("Você precisa conceder permissão de leitura de contatos para usar o" +
+                                        " recurso de leitura de contatos. Tente novamente e conceda-lhe!").show();
+                    }
+                }
+                break;
+        }
     }
 
     @Override
@@ -296,14 +377,86 @@ public class MainActivity extends BaseActivity
         }
     }
 
-
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fab:
+                if (!FAB_Status) {
+                    //Display FAB menu
+                    expandFAB();
+                    FAB_Status = true;
+                } else {
+                    //Close FAB menu
+                    hideFAB();
+                    FAB_Status = false;
+                }
+                break;
 
+            case R.id.fab_1:
+//                startActivity(new Intent(MainActivity.this, NewPostActivity.class));
+                hideFAB();
+                FAB_Status = false;
+                break;
+
+            case R.id.fab_2:
+                startActivity(new Intent(MainActivity.this, NewPostActivity.class));
+                //Close FAB menu
+                hideFAB();
+                FAB_Status = false;
+                break;
+            case R.id.frameFlatButtom:
+                hideFAB();
+                FAB_Status = false;
+                break;
+
+            default:
+                break;
+
+        }
     }
 
-    @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    private void expandFAB() {
+        //Floating Action Button 1
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab1.getLayoutParams();
+        //layoutParams.rightMargin += (int) fab1.getWidth();
+        layoutParams.bottomMargin += (int) (fab1.getHeight() * 0.8);
+        fab1.setLayoutParams(layoutParams);
+        fab1.startAnimation(show_fab_1);
+        fab1.setClickable(true);
+        fab1.setOnClickListener(this);
 
+        //Floating Action Button 2
+        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fab2.getLayoutParams();
+        //layoutParams2.rightMargin += (int) fab2.getWidth();
+        layoutParams2.bottomMargin += (int) (fab2.getHeight() * 1.6);
+        fab2.setLayoutParams(layoutParams2);
+        fab2.startAnimation(show_fab_2);
+        fab2.setClickable(true);
+        fab2.setOnClickListener(this);
+
+        frameFlatButtom.setBackgroundColor(Color.parseColor("#d0ffffff"));
+        frameFlatButtom.setOnClickListener(this);
     }
+
+    private void hideFAB() {
+        //Floating Action Button 1
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fab1.getLayoutParams();
+        //layoutParams.rightMargin -= (int) fab1.getWidth();
+        layoutParams.bottomMargin -= (int) (fab1.getHeight() * 0.8);
+        fab1.setLayoutParams(layoutParams);
+        fab1.startAnimation(hide_fab_1);
+        fab1.setClickable(false);
+
+        //Floating Action Button 2
+        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fab2.getLayoutParams();
+        //layoutParams2.rightMargin -= (int) fab2.getWidth();
+        layoutParams2.bottomMargin -= (int) (fab2.getHeight() * 1.6);
+        fab2.setLayoutParams(layoutParams2);
+        fab2.startAnimation(hide_fab_2);
+        fab2.setClickable(false);
+
+        frameFlatButtom.setBackgroundColor(Color.TRANSPARENT);
+        frameFlatButtom.setClickable(false);
+    }
+
 }

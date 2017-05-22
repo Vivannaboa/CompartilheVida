@@ -1,10 +1,16 @@
 package br.com.compartilhevida.compartilhevida;
 
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,7 +45,8 @@ public class NewPostActivity extends BaseActivity {
     private EditText mBodyField;
     private FloatingActionButton mSubmitButton;
     private Usuario mUser;
-
+    private Toolbar mToolbar;
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,48 +55,51 @@ public class NewPostActivity extends BaseActivity {
         // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
-        mUser  = Usuario.getInstance(this);
+        mUser  = Usuario.getInstance();
 
-        mPhotoUser = (ImageView) findViewById(R.id.post_author_photo);
+        mPhotoUser = (ImageView) findViewById(R.id.toolbar_logo);
         mNomeUser = (TextView) findViewById(R.id.post_author);
-        mTitleField = (EditText) findViewById(R.id.post_title);
-        mBodyField = (EditText) findViewById(R.id.post_body);
-
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_post);
+        mBodyField = (EditText)findViewById(R.id.edtBodyField) ;
+        setSupportActionBar(mToolbar);
         if (mUser!=null){
-
             mNomeUser.setText(mUser.getFirst_name());
         }
         if (getUrlPhoto()!=null){
             Glide.with(getBaseContext()).load(getUrlPhoto()).transform(new CircleTransform(this)).into(mPhotoUser);
+
         }
-
-
-//        mSubmitButton = (FloatingActionButton) findViewById(R.id.fab_submit_post);
-
-//        mSubmitButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                submitPost();
-//            }
-//        });
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
 
     }
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.tolbar_footer_new_post, menu);
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.enviar_post:
+                submitPost();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
     private void submitPost() {
-        final String title = mTitleField.getText().toString();
+//        final String title = mTitleField.getText().toString();
         final String body = mBodyField.getText().toString();
 
-        // Title is required
-        if (TextUtils.isEmpty(title)) {
-            mTitleField.setError(REQUIRED);
-            return;
-        }
 
         // Body is required
         if (TextUtils.isEmpty(body)) {
@@ -119,7 +129,7 @@ public class NewPostActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
-                            writeNewPost(userId, user.getFirst_name(), title, body, user.getUrlPhoto());
+                            writeNewPost(userId, user.getFirst_name(),  body, getUrlPhoto().toString(),"informat o tipo");
                         }
 
                         // Finish this Activity, back to the stream
@@ -140,21 +150,21 @@ public class NewPostActivity extends BaseActivity {
     }
 
     private void setEditingEnabled(boolean enabled) {
-        mTitleField.setEnabled(enabled);
+//        mTitleField.setEnabled(enabled);
         mBodyField.setEnabled(enabled);
-        if (enabled) {
-            mSubmitButton.setVisibility(View.VISIBLE);
-        } else {
-            mSubmitButton.setVisibility(View.GONE);
-        }
+//        if (enabled) {
+//            mSubmitButton.setVisibility(View.VISIBLE);
+//        } else {
+//            mSubmitButton.setVisibility(View.GONE);
+//        }
     }
 
     // [START write_fan_out]
-    private void writeNewPost(String userId, String username, String title, String body,String urlPhoto) {
+    private void writeNewPost(String userId, String username,  String body,String urlPhoto,String tipo) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body,urlPhoto, tipo);
+        Post post = new Post(userId, username, body,urlPhoto, tipo);
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

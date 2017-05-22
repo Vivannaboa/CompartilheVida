@@ -19,12 +19,13 @@ public class Post {
     private String tipo;
     private int coracaoCount = 0;
     private Map<String, Boolean> coracao = new HashMap<>();
+    private Usuario mUser;
 
     public Post() {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String autor, String title, String mensagem, String urlFoto, String tipo) {
+    public Post(String uid, String autor, String mensagem, String urlFoto, String tipo) {
         this.uid = uid;
         this.autor = autor;
         this.mensagem = mensagem;
@@ -69,7 +70,7 @@ public class Post {
     }
 
 
-    public String getBody() {
+    public String getMensagem() {
         return mensagem;
     }
 

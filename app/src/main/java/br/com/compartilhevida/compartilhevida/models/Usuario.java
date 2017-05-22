@@ -11,7 +11,6 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Usuario {
     private static Usuario instance;
-    private Context context;
 
     private String uid;
     private String first_name;
@@ -25,19 +24,13 @@ public class Usuario {
     private String cidade;
     private boolean recebeNotificcacao;
 
-
-    public static Usuario getInstance(Context context) {
+    public static Usuario getInstance() {
         if (instance == null)
-            instance = new Usuario(context);
+            instance = new Usuario();
         return instance;
     }
 
-    private Usuario(Context context) {
-        this.context = context;
-
-    }
     public Usuario() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
     @Exclude
