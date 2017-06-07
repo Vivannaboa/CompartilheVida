@@ -39,7 +39,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.ParseException;
 
 import br.com.compartilhevida.compartilhevida.fragment.Post.MyPostsFragment;
 import br.com.compartilhevida.compartilhevida.fragment.Post.RecentPostsFragment;
@@ -109,38 +108,39 @@ public class MainActivity extends BaseActivity
             }
         };
 
-        //o usuário do firebase só tem os dados básicos então vamos no banco pegar o restante
-        if (userFirebase != null) {
-            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
-        }
         //agora que esta tudo certo com o usuário vamos carregar o layout
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Cria um adapter para inflar as tabs
-        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private final android.support.v4.app.Fragment[] mFragments = new android.support.v4.app.Fragment[] {
-                    new RecentPostsFragment(),
-                    new MyPostsFragment()
+        //o usuário do firebase só tem os dados básicos então vamos no banco pegar o restante
+        if (userFirebase != null) {
+            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
+
+           // Cria um adapter para inflar as tabs
+            mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+                private final android.support.v4.app.Fragment[] mFragments = new android.support.v4.app.Fragment[] {
+                        new RecentPostsFragment(),
+                        new MyPostsFragment()
+                };
+                private final String[] mFragmentNames = new String[] {
+                        getString(R.string.heading_recent),
+                        getString(R.string.heading_my_posts)
+                };
+                @Override
+                public android.support.v4.app.Fragment getItem(int position) {
+                    return mFragments[position];
+                }
+                @Override
+                public int getCount() {
+                    return mFragments.length;
+                }
+                @Override
+                public CharSequence getPageTitle(int position) {
+                    return mFragmentNames[position];
+                }
             };
-            private final String[] mFragmentNames = new String[] {
-                    getString(R.string.heading_recent),
-                    getString(R.string.heading_my_posts)
-            };
-            @Override
-            public android.support.v4.app.Fragment getItem(int position) {
-                return mFragments[position];
-            }
-            @Override
-            public int getCount() {
-                return mFragments.length;
-            }
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return mFragmentNames[position];
-            }
-        };
+        }
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
@@ -298,7 +298,7 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_doacao) {
             permissionReadContat();
         } else if (id == R.id.nav_hemocentros) {
-
+            startActivity(new Intent(MainActivity.this, HemocentrosActivity.class));
             //startActivity(new Intent(MainActivity.this, MapsActivity.class));
         } else if (id == R.id.nav_cartilha_doador) {
 
@@ -331,28 +331,7 @@ public class MainActivity extends BaseActivity
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    //Aqui o usuário permitiu o acesso.
-                }else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_CONTACTS)){
-                        new AlertDialog.Builder(this).
-                                setTitle("Permissão para ler contatos").
-                                setMessage("Você precisa conceder permissão de leitura de contatos para usar o" +
-                                        " recurso de leitura de contatos. Tente novamente e conceda-lhe!").show();
-                    }else{
-                        new AlertDialog.Builder(this).
-                                setTitle("Permissão de leitura dos contatos não concedida").
-                                setMessage("Você precisa conceder permissão de leitura de contatos para usar o" +
-                                        " recurso de leitura de contatos. Tente novamente e conceda-lhe!").show();
-                    }
-                }
-                break;
-        }
-    }
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -393,7 +372,6 @@ public class MainActivity extends BaseActivity
                 break;
 
             case R.id.fab_1:
-//                startActivity(new Intent(MainActivity.this, NewPostActivity.class));
                 hideFAB();
                 FAB_Status = false;
                 break;
