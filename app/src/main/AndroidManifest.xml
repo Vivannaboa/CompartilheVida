@@ -45,6 +45,9 @@
         <activity
             android:name=".NewPostActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PostDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

@@ -196,7 +196,6 @@ public class HemocentrosActivity extends FragmentActivity implements
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(mLocation)      // Define o centro do mapa para Mountain View
                     .bearing(10)                // Define a orientação da câmera para o leste
-                    .zoom(20)
                     .tilt(5)                   // Define a inclinação da câmera para 30 graus
                     .build();                   // chama o conrturor
             //passa a posição para o mapa

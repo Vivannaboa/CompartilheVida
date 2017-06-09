@@ -58,6 +58,7 @@ public class NewPostActivity extends BaseActivity {
         mPhotoUser = (ImageView) findViewById(R.id.toolbar_logo);
         mNomeUser = (TextView) findViewById(R.id.post_author);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_post);
+        mTitleField =(EditText) findViewById(R.id.title_view);
         mBodyField = (EditText)findViewById(R.id.edtBodyField) ;
         setSupportActionBar(mToolbar);
         if (mUser!=null){
@@ -97,11 +98,16 @@ public class NewPostActivity extends BaseActivity {
     private void submitPost() {
 //        final String title = mTitleField.getText().toString();
         final String body = mBodyField.getText().toString();
-
+        final String titulo =  mTitleField.getText().toString();
 
         // Body is required
         if (TextUtils.isEmpty(body)) {
             mBodyField.setError(REQUIRED);
+            return;
+        }
+        // Body is required
+        if (TextUtils.isEmpty(titulo)) {
+            mTitleField.setError(REQUIRED);
             return;
         }
 
@@ -127,7 +133,7 @@ public class NewPostActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
-                            writeNewPost(userId, user.getFirst_name(),  body, getUrlPhoto().toString(),"informat o tipo");
+                            writeNewPost(userId, user.getFirst_name(), titulo ,body,"informat o tipo");
                         }
 
                         // Finish this Activity, back to the stream
@@ -158,11 +164,15 @@ public class NewPostActivity extends BaseActivity {
     }
 
     // [START write_fan_out]
-    private void writeNewPost(String userId, String username,  String body,String urlPhoto,String tipo) {
+    private void writeNewPost(String userId, String username, String titulo, String body,String tipo) {
+       String urlPhoto = "";
+        if (getUrlPhoto()!=null){
+            urlPhoto = getUrlPhoto().toString();
+        }
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, body,urlPhoto, tipo);
+        Post post = new Post(userId, username,titulo, body,urlPhoto, tipo);
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

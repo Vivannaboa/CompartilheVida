@@ -15,9 +15,11 @@ public class Post {
     private String uid;
     private String autor;
     private String urlFoto;
+    private String titulo;
     private String mensagem;
     private String tipo;
     private int coracaoCount = 0;
+    private int comentariosCont =0 ;
     private Map<String, Boolean> coracao = new HashMap<>();
     private Usuario mUser;
 
@@ -25,9 +27,10 @@ public class Post {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String autor, String mensagem, String urlFoto, String tipo) {
+    public Post(String uid, String autor, String titulo, String mensagem, String urlFoto, String tipo) {
         this.uid = uid;
         this.autor = autor;
+        this.titulo = titulo;
         this.mensagem = mensagem;
         this.urlFoto = urlFoto;
         this.tipo = tipo;
@@ -38,10 +41,13 @@ public class Post {
         HashMap<String, Object> result = new HashMap<>();
         result.put("uid", uid);
         result.put("autor", autor);
+        result.put("titulo", titulo);
         result.put("mensagem", mensagem);
         result.put("coracaoCount", coracaoCount);
         result.put("coracao", coracao);
         result.put("urlFoto", urlFoto);
+        result.put("comentariosCont", comentariosCont);
+
         return result;
     }
 
@@ -99,5 +105,28 @@ public class Post {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public Usuario getmUser() {
+        return mUser;
+    }
+
+    public void setmUser(Usuario mUser) {
+        this.mUser = mUser;
+    }
+
+    public int getComentariosCont() {
+        return comentariosCont;
+    }
+
+    public void setComentariosCont(int comentariosCont) {
+        this.comentariosCont = comentariosCont;
     }
 }

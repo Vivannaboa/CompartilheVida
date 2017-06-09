@@ -13,7 +13,7 @@ public class CompartilheVida extends Application {
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(this);
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
 

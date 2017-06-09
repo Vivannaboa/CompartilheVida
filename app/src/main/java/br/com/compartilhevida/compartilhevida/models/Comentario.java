@@ -7,18 +7,20 @@ import java.util.Map;
 
 @IgnoreExtraProperties
 public class Comentario {
-    public String uid;
-    public String autor;
+    private String uid;
+    private String autor;
     public String text;
-    private Usuario mUser;
+    private String urlFoto;
+
 
     public Comentario() {
     }
 
-    public Comentario(String uid, String author, String text) {
+    public Comentario(String uid, String author, String text, String urlFoto) {
         this.uid = uid;
         this.autor = author;
         this.text = text;
+        this.urlFoto = urlFoto;
     }
 
     public Map<String, Object> toMap() {
@@ -26,8 +28,10 @@ public class Comentario {
         result.put("uid", uid);
         result.put("autor", autor);
         result.put("text", text);
+        result.put("urlFoto", urlFoto);
         return result;
     }
+
     public String getUid() {
         return uid;
     }
@@ -50,6 +54,14 @@ public class Comentario {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 }
 
