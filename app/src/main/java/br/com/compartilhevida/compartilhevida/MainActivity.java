@@ -372,6 +372,7 @@ public class MainActivity extends BaseActivity
                 break;
 
             case R.id.fab_1:
+                startActivity(new Intent(MainActivity.this, DoacaoActivity.class));
                 hideFAB();
                 FAB_Status = false;
                 break;

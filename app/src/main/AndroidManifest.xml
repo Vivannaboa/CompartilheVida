@@ -75,8 +75,10 @@
 
         <activity
             android:name=".HemocentrosActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_hemocentros"></activity>
+            android:label="@string/title_activity_hemocentros"
+            android:screenOrientation="portrait" />
+        <activity android:name=".DoacaoActivity"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

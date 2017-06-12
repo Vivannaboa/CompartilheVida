@@ -68,6 +68,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="?attr/selectableItemBackground"
+                        android:padding="10dp"
                         app:srcCompat="@drawable/ic_favorite_border_red_24dp" />
 
                     <TextView
@@ -89,8 +90,6 @@
                         android:id="@+id/compartilhar"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackground"
                         app:srcCompat="@drawable/ic_share_red_24dp" />
@@ -102,6 +101,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="5dp"
                         android:background="?attr/selectableItemBackground"
+                        android:padding="10dp"
                         app:srcCompat="@drawable/ic_comment_red_24dp" />
 
 
@@ -121,6 +121,7 @@
                         android:layout_marginStart="20dp"
                         android:background="@android:color/transparent"
                         android:contentDescription="Detalhes"
+                        android:padding="10dp"
                         app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />
 
 

@@ -1,7 +1,5 @@
 package br.com.compartilhevida.compartilhevida.models;
 
-import android.content.Context;
-
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 

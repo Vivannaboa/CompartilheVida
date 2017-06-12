@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -257,6 +255,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 user.setUid(account.getId());
                 user.setUrlPhoto(account.getPhotoUrl().toString());
                 accessGoogleLoginData(account.getIdToken());
+
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -273,7 +272,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             onAuthSuccess(mAuth.getCurrentUser());
         }
 
-        //facebook
+        //firebase
         mAuth.addAuthStateListener(mAuthListener);
 
         //google
