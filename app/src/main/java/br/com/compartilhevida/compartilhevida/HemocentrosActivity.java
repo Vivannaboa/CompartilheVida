@@ -92,6 +92,7 @@ public class HemocentrosActivity extends FragmentActivity implements
                     e.printStackTrace();
                 }
                 Log.i(TAG, "carregou os dados do banco");
+                getLocation();
                 adicionarMarcadores();
             }
 
@@ -122,7 +123,7 @@ public class HemocentrosActivity extends FragmentActivity implements
         Log.i(TAG, "Terminou de carregar o mapa");
         mMap = googleMap;
         //configura o mapa e pede permisão ao usuário para acessar a localização se ainda não possuir
-        setUpMap();
+       // setUpMap();
     }
 
     public void setUpMap() {
@@ -133,6 +134,7 @@ public class HemocentrosActivity extends FragmentActivity implements
         } else {
             //habilita o botão para Mylocstion
             mMap.setMyLocationEnabled(true);
+            Log.i(TAG, "Já tem permissão ao usuário");
         }
     }
 
@@ -145,6 +147,9 @@ public class HemocentrosActivity extends FragmentActivity implements
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_LOCATION);
                         return;
+                    }else{
+                        getLocation();
+                        adicionarMarcadores();
                     }
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -164,45 +169,7 @@ public class HemocentrosActivity extends FragmentActivity implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_LOCATION);
-            Log.i(TAG, "Pediu permissão ao usuário");
-            return;
-
-        }
-        //pega a localização atual
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            Log.i(TAG, "Adicionou a minha localização");
-            mLatitude = String.valueOf(mLastLocation.getLatitude());
-            mLongitude = String.valueOf(mLastLocation.getLongitude());
-            // Add a marker in Sydney and move the camera
-            mLocation = new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
-            MarkerOptions mMarkerOptions = new MarkerOptions();
-            mMarkerOptions.position(mLocation);
-            mMarkerOptions.title("Minha Localização");
-            mMarkerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-            mMap.addMarker(mMarkerOptions);
-
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(mLocation));
-
-            // Zoom animando a câmera.
-            mMap.animateCamera(CameraUpdateFactory.zoomIn());
-
-            // Diminuindo o zoom e aumentado o nível para 10, animando com uma duração de 2 segundos.
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(30), 2000, null);
-
-            // contruindo uma CameraPosition com foco Mountain View.
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(mLocation)      // Define o centro do mapa para Mountain View
-                    .bearing(10)                // Define a orientação da câmera para o leste
-                    .tilt(5)                   // Define a inclinação da câmera para 30 graus
-                    .build();                   // chama o conrturor
-            //passa a posição para o mapa
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(7));
-
-        }
+        getLocation();
     }
 
     @Override
@@ -216,24 +183,30 @@ public class HemocentrosActivity extends FragmentActivity implements
     }
 
     private void adicionarMarcadores() {
-        LatLng mLocation2;
+        LatLng mLocation2 = null;
         try {
             //percore a lista de hemocentros
             for (Hemocentro hemocentro : hemocentroList) {
                 if (hemocentro.getLat() != 0.0 && hemocentro.getLng() != 0.0) {//se não tem lat/lng tem que procurar pelo endereços
                     mLocation2 = new LatLng(hemocentro.getLat(), hemocentro.getLng());
                 } else {
-                    mLocation2 = pegaCoordenadaDoEndereco(hemocentro.getEndereco());
+                    if (hemocentro.getEndereco()!=null) {
+                        if (!hemocentro.getEndereco().isEmpty()) {
+                            mLocation2 = pegaCoordenadaDoEndereco(hemocentro.getEndereco());
+                        }
+                    }
                     if (mLocation2 != null) {
                         hemocentro.setLat(mLocation2.latitude);
                         hemocentro.setLng(mLocation2.longitude);
                         updateHemocentro(hemocentro);
                     }
                 }
-                if (mLocation2 != null) {
+                if (mLocation!=null && mLocation2 != null) {
                     MarkerOptions markerOptions = new MarkerOptions();//cria uma nova configuração para o marcador
                     markerOptions.position(mLocation2);//passa a posição
-                    markerOptions.title(hemocentro.getNome());//coloca o nome do ponto
+                    if (hemocentro.getNome()!=null) {
+                        markerOptions.title(hemocentro.getNome());//coloca o nome do ponto
+                    }
                     mMap.addMarker(markerOptions);
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(mLocation));//atualiza avisualização
                 }
@@ -268,6 +241,47 @@ public class HemocentrosActivity extends FragmentActivity implements
         }
         return null;
     }
+    private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_LOCATION);
+            Log.i(TAG, "Pediu permissão ao usuário");
+            return;
+
+        }
+        mMap.setMyLocationEnabled(true);
+        //pega a localização atual
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Log.i(TAG, "Adicionou a minha localização");
+            mLatitude = String.valueOf(mLastLocation.getLatitude());
+            mLongitude = String.valueOf(mLastLocation.getLongitude());
+            // Add a marker in Sydney and move the camera
+            mLocation = new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
+            MarkerOptions mMarkerOptions = new MarkerOptions();
+            mMarkerOptions.position(mLocation);
+            mMarkerOptions.title("Minha Localização");
+            mMarkerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            mMap.addMarker(mMarkerOptions);
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(mLocation));
+
+            // Zoom animando a câmera.
+            mMap.animateCamera(CameraUpdateFactory.zoomIn());
+
+            // Diminuindo o zoom e aumentado o nível para 10, animando com uma duração de 2 segundos.
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(30), 2000, null);
+
+            // contruindo uma CameraPosition com foco Mountain View.
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(mLocation)      // Define o centro do mapa para Mountain View
+                    .bearing(10)                // Define a orientação da câmera para o leste
+                    .tilt(5)                   // Define a inclinação da câmera para 30 graus
+                    .build();                   // chama o conrturor
+            //passa a posição para o mapa
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(7));
 
 
+        }
+    }
 }

@@ -10,6 +10,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -35,9 +39,11 @@ public class BaseActivity extends AppCompatActivity {
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
+
     public Uri getUrlPhoto() {
         return FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
     }
+
     @Nullable
     public static Drawable loadImageFromWebOperations(String url) {
         try {
@@ -48,6 +54,39 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Date getDateTime() {
+        return new Date();
+    }
+
+    public static String dateToString(Date data) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        if (data == null) {
+            data =  getDateTime();
+        }
+        return dateFormat.format(data);
+    }
+
+    public static String soDateToString(Date data) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "dd/MM/yyyy", Locale.getDefault());
+        dateFormat.setLenient(false);
+        if (data == null) {
+            data =  getDateTime();
+        }
+        return dateFormat.format(data);
+    }
+
+    public static Date stringToDate(String string) throws ParseException {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        if (string == null) {
+            return null;
+        }
+        return dateFormat.parse(string);
     }
 
 }

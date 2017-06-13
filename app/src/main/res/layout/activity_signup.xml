@@ -343,6 +343,32 @@
                 android:text="@string/btn_link_to_login"
                 android:textAllCaps="false"
                 android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/btn_sair"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorAccent"
+                android:onClick="signOut"
+                android:text="Sair"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_excluir_conta"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorAccent"
+                android:onClick="clickExcluirConta"
+                android:text="Excluir Conta"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

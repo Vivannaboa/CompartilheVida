@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity
 
         PackageInfo info;
         try {
-            info = getPackageManager().getPackageInfo("com.you.name", PackageManager.GET_SIGNATURES);
+            info = getPackageManager().getPackageInfo("br.com.compartilhevida.compartilhevida", PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md;
                 md = MessageDigest.getInstance("SHA");
@@ -329,15 +329,8 @@ public class MainActivity extends BaseActivity
 
         } else if (id == R.id.nav_config) {
 
-//            getFragmentManager()
-//                    .beginTransaction()
-//                    .replace(R.id.containerView, new ConfigFragment(),"Config")
-//                    .commit();
         } else if (id == R.id.nav_conta) {
-//            getFragmentManager()
-//                    .beginTransaction()
-//                    .replace(R.id.containerView, ContaFragment.newInstance(mUserDatabase),"Conta")
-//                    .commit();
+            startActivity(new Intent(this,SignupActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

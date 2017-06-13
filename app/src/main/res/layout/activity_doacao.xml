@@ -2,25 +2,22 @@
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/main.appbar"
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="200dp"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:expanded="true">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/main.collapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
@@ -46,10 +43,11 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floating_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_horizontal_margin"
-        app:layout_anchor="@id/main.appbar"
+        app:layout_anchor="@id/appbar_layout"
         app:layout_anchorGravity="bottom|right|end"
         app:srcCompat="@drawable/ic_done_white_24dp" />
 
@@ -83,15 +81,14 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/editTextDataNacimento"
+                        android:id="@+id/edt_data_doacao"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
                         android:focusable="false"
-                        android:hint="@string/data_nascimento"
-                        android:inputType="date"
-                        android:onClick="selectDate">
+                        android:hint="Data da Doação"
+                        android:inputType="date">
 
                         <!--<requestFocus />-->
                     </EditText>
@@ -115,7 +112,7 @@
                     android:layout_height="wrap_content">
 
                     <AutoCompleteTextView
-                        android:id="@+id/autoCompleteTextViewhemocentro"
+                        android:id="@+id/auct_hemocentro"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/hemocentro"
@@ -125,30 +122,35 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="12dp"
+                android:foregroundGravity="top"
+                android:orientation="horizontal">
 
                 <Switch
-                    android:id="@+id/switch1"
+                    android:id="@+id/mSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/distancia_icone"
+                    android:checked="true" />
+
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:showText="true"
-                    android:splitTrack="false"
-                    android:text="@string/doacao_voluntaria"
-                    android:textAlignment="textStart"
-                    android:textIsSelectable="false"
-                    android:textOff="Não"
-                    android:textOn="Sim" />
+                    android:layout_height="match_parent"
+                    android:elevation="1dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/doacao_voluntaria" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_favorecido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:elevation="0dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -162,7 +164,7 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/edtFavorecido"
+                        android:id="@+id/edt_favorecido"
                         style="@style/Widget.AppCompat.AutoCompleteTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
