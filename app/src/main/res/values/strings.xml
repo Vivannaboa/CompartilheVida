@@ -69,7 +69,7 @@
         <item>O-</item>
         <item>Não sei</item>
     </string-array>
-    <string name="title_activity_post">POstActivity</string>
+    <string name="title_activity_post">Post Activity</string>
     <string name="carregando">Carregando...</string>
     <string name="nome">Nome</string>
     <string name="sobrenome">Sobrenome</string>
@@ -86,4 +86,8 @@
     <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec condimentum ante, quis mattis mi. Proin ut rhoncus libero, ac euismod neque. Ut suscipit, enim a facilisis consequat, orci lacus venenatis orci, at ultricies orci nulla sed ex. In condimentum viverra velit, eget feugiat libero imperdiet vel. Aenean pretium, lectus vitae bibendum bibendum, diam turpis convallis eros, quis tristique leo sapien at ipsum. Praesent eu odio id nulla lobortis auctor. Donec eget dolor eget nisl euismod commodo vel a lacus. Quisque ut justo vitae urna pharetra accumsan. Etiam dignissim neque iaculis mauris viverra, blandit rhoncus odio porttitor. Phasellus nibh arcu.</string>
     <string name="title_activity_hemocentros">Map</string>
     <string name="informe_um_t_tulo">Informe um título...</string>
+    <string name="salvar">Salvar</string>
+    <string name="doacao_voluntaria">Foi uma doaçao voluntaria?</string>
+    <string name="favorecido">Favorecido</string>
+    <string name="hemocentro">Hemocentro</string>
 </resources>
