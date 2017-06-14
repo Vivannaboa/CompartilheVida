@@ -90,4 +90,5 @@
     <string name="doacao_voluntaria">Foi uma doaçao voluntaria?</string>
     <string name="favorecido">Favorecido</string>
     <string name="hemocentro">Hemocentro</string>
+    <string name="title_activity_list_doacao">ListDoacaoActivity</string>
 </resources>

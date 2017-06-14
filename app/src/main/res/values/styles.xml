@@ -33,6 +33,7 @@
         <item name="colorAccent">#3498db</item>
         <!--<item name="android:colorControlActivated">#FF4081</item>-->
     </style>
+
     <style name="hintText">
         <item name="android:textColor">#000</item>
         <item name="android:textSize">20sp</item>
