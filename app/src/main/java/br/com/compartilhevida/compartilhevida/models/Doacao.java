@@ -1,6 +1,5 @@
 package br.com.compartilhevida.compartilhevida.models;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +13,8 @@ public class Doacao {
     private String dataDoacao;
     private String hemocentro;
     private boolean voluntaria;
-    private Usuario mUser;
+    private String sexoDoador;
+    private String favorecido;
 
     public Doacao() {
     }
@@ -31,8 +31,11 @@ public class Doacao {
         HashMap<String, Object> result = new HashMap<>();
         result.put("uid", uid);
         result.put("autor", autor);
-        result.put("datadoacao", dataDoacao);
+        result.put("dataDoacao", dataDoacao);
+        result.put("hemocentro",hemocentro);
         result.put("voluntaria", voluntaria);
+        result.put("sexoDoador",sexoDoador);
+        result.put("favorecido", favorecido);
         return result;
     }
     public String getDataDoacao() {
@@ -51,9 +54,6 @@ public class Doacao {
         this.hemocentro = hemocentro;
     }
 
-    public boolean getVoluntaria() {
-        return voluntaria;
-    }
 
     public void setVoluntaria(boolean voluntaria) {
         this.voluntaria = voluntaria;
@@ -73,5 +73,25 @@ public class Doacao {
 
     public void setAutor(String autor) {
         this.autor = autor;
+    }
+
+    public boolean isVoluntaria() {
+        return voluntaria;
+    }
+
+    public String getSexoDoador() {
+        return sexoDoador;
+    }
+
+    public void setSexoDoador(String sexoDoador) {
+        this.sexoDoador = sexoDoador;
+    }
+
+    public String getFavorecido() {
+        return favorecido;
+    }
+
+    public void setFavorecido(String favorecido) {
+        this.favorecido = favorecido;
     }
 }

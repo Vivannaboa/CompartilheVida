@@ -1,5 +1,6 @@
 package br.com.compartilhevida.compartilhevida;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.icu.util.Calendar;
@@ -154,6 +155,8 @@ public class DoacaoActivity extends BaseActivity implements
                 //floating booton
                 if (validarDados()) {
                     writeNewDoacao();
+                    setResult(Activity.RESULT_OK);
+                    finish();
                 }
                 break;
             case R.id.edt_data_doacao:
@@ -176,6 +179,8 @@ public class DoacaoActivity extends BaseActivity implements
             doacao.setDataDoacao(edtDataDoacao.getText().toString());
             doacao.setHemocentro(autcHemocentro.getText().toString());
             doacao.setVoluntaria(mSwitch.isChecked());
+            doacao.setFavorecido(edtFavorecido.getText().toString());
+            doacao.setSexoDoador(Usuario.getInstance().getGender());
             Map<String, Object> objectMap = doacao.toMap();
 
             Map<String, Object> childUpdates = new HashMap<>();
@@ -183,8 +188,8 @@ public class DoacaoActivity extends BaseActivity implements
             childUpdates.put("/user-doacoes/" + getUid() + "/" + key, objectMap);
             mDatabase.updateChildren(childUpdates);
             VerificaCadastroHemocentro(doacao.getHemocentro());
-
             Toast.makeText(this, "Doação registrada com sucesso!", Toast.LENGTH_SHORT).show();
+
         } catch (Exception e) {
             FirebaseCrash.report(e);
         }
@@ -210,6 +215,8 @@ public class DoacaoActivity extends BaseActivity implements
                 Log.i(TAG, "Clicou em salvar");
                 if (validarDados()) {
                     writeNewDoacao();
+                    setResult(Activity.RESULT_OK);
+                    finish();
                 }
                 break;
             default:

@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.fragment.Post;
+package br.com.compartilhevida.compartilhevida.fragment.post;
 
 import android.content.Context;
 import android.content.Intent;

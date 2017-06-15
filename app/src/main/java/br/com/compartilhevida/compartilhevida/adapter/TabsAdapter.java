@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import br.com.compartilhevida.compartilhevida.fragment.Post.MyPostsFragment;
-import br.com.compartilhevida.compartilhevida.fragment.Post.RecentPostsFragment;
+import br.com.compartilhevida.compartilhevida.fragment.post.MyPostsFragment;
+import br.com.compartilhevida.compartilhevida.fragment.post.RecentPostsFragment;
 
 import static br.com.compartilhevida.compartilhevida.fragment.TabFragment.int_items;
 
@@ -14,7 +14,6 @@ import static br.com.compartilhevida.compartilhevida.fragment.TabFragment.int_it
  */
 
 public class TabsAdapter extends FragmentPagerAdapter {
-
 
     public TabsAdapter(FragmentManager fm)
     {
@@ -27,7 +26,6 @@ public class TabsAdapter extends FragmentPagerAdapter {
                 return  new RecentPostsFragment();
             case 1:
                 return new MyPostsFragment();
-
         }
         return null;
     }
@@ -40,10 +38,9 @@ public class TabsAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position){
         switch (position){
             case 0:
-                return "Summary";
+                return "Meus Posts";
             case 1:
-                return "Stocks";
-
+                return "Recentes";
         }
 
         return null;

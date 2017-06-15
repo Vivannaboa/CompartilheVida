@@ -1,5 +1,6 @@
 package br.com.compartilhevida.compartilhevida;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import br.com.compartilhevida.compartilhevida.fragment.ConfigFragment;
 import br.com.compartilhevida.compartilhevida.fragment.ContaFragment;
+import br.com.compartilhevida.compartilhevida.fragment.DoacaoFragment;
 import br.com.compartilhevida.compartilhevida.fragment.TabFragment;
 import br.com.compartilhevida.compartilhevida.models.Usuario;
 import br.com.compartilhevida.compartilhevida.util.CircleTransform;
@@ -52,6 +54,7 @@ public class MainActivity extends BaseActivity
 
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 10;
     private static final String TAG = "MainActivity";
+    private static final int RESULT_DOACAO = 1;
 
     // Firebase instance variables
     private FirebaseAuth.AuthStateListener authListener;
@@ -117,10 +120,7 @@ public class MainActivity extends BaseActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //o usuário do firebase só tem os dados básicos então vamos no banco pegar o restante
-        if (userFirebase != null) {
-            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
-        }
+
         //Floating Action Buttons
         frameFlatButtom = (FrameLayout) findViewById(R.id.frameFlatButtom);
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -141,8 +141,12 @@ public class MainActivity extends BaseActivity
 
         FM= getSupportFragmentManager();
         FT= FM.beginTransaction();
-        FT.replace(R.id.containerView, new TabFragment()).commit();
-
+        //o usuário do firebase só tem os dados básicos então vamos no banco pegar o restante
+        if (userFirebase != null) {
+            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
+            FT.replace(R.id.containerView, new TabFragment()).commit();
+        }
+        
         navigationView.setNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -268,27 +272,30 @@ public class MainActivity extends BaseActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
-
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        if (id == R.id.nav_doacao) {
-            FragmentTransaction fragmentTransaction= FM.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, new ContaFragment()).commit();
-//            startActivity(new Intent(this, ListDoacaoActivity.class));
-        } else if (id == R.id.nav_hemocentros) {
-            startActivity(new Intent(MainActivity.this, HemocentrosActivity.class));
-            //startActivity(new Intent(MainActivity.this, MapsActivity.class));
-        } else if (id == R.id.nav_cartilha_doador) {
-            FragmentTransaction fragmentTransaction1=FM.beginTransaction();
-            fragmentTransaction1.replace(R.id.containerView,new TabFragment()).commit();
-        } else if (id == R.id.nav_config) {
-            FragmentTransaction fragmentTransaction1=FM.beginTransaction();
-            fragmentTransaction1.replace(R.id.containerView,new ConfigFragment()).commit();
-        } else if (id == R.id.nav_conta) {
-            startActivity(new Intent(this,SignupActivity.class));
+        FragmentTransaction fragmentTransaction = FM.beginTransaction();
+        switch (item.getItemId()){
+            case R.id.nav_posts:
+                fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
+                break;
+            case R.id.nav_doacao:
+                fragmentTransaction.replace(R.id.containerView, new DoacaoFragment()).commit();
+                break;
+            case R.id.nav_hemocentros:
+                startActivity(new Intent(MainActivity.this, HemocentrosActivity.class));
+                break;
+            case R.id.nav_cartilha_doador:
+                fragmentTransaction.replace(R.id.containerView,new TabFragment()).commit();
+                break;
+            case R.id.nav_config:
+                fragmentTransaction.replace(R.id.containerView,new ConfigFragment()).commit();
+                break;
+            case R.id.nav_conta:
+                startActivity(new Intent(this,SignupActivity.class));
+                break;
+            default:
+                break;
         }
-
-        return false;
+        return true;
     }
 
     @Override
@@ -323,7 +330,7 @@ public class MainActivity extends BaseActivity
                 break;
 
             case R.id.fab_1:
-                startActivity(new Intent(MainActivity.this, DoacaoActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, DoacaoActivity.class),RESULT_DOACAO);
                 hideFAB();
                 FAB_Status = false;
                 break;
@@ -391,6 +398,18 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_DOACAO) {
+            if (resultCode == Activity.RESULT_OK) {
+                FragmentTransaction fragmentTransaction = FM.beginTransaction();
+                fragmentTransaction.replace(R.id.containerView, new DoacaoFragment()).commit();
+            }
+        }
 
     }
 }

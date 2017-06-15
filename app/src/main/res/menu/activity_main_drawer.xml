@@ -5,8 +5,14 @@
     <group
         android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_posts"
+            android:icon="@drawable/ic_send_black_24dp"
+            android:checkable="false"
+            android:checked="false"
+            android:title="Postagens" />
+        <item
             android:id="@+id/nav_doacao"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_favorite_black_24dp"
             android:checkable="false"
             android:checked="false"
             android:title="Doações" />

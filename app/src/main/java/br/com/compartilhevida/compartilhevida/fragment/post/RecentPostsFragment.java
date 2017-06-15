@@ -1,4 +1,4 @@
-package br.com.compartilhevida.compartilhevida.fragment.Post;
+package br.com.compartilhevida.compartilhevida.fragment.post;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
