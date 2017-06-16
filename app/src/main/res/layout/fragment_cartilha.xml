@@ -2,17 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.compartilhevida.compartilhevida.fragment.DoacaoFragment">
+    tools:context="br.com.compartilhevida.compartilhevida.fragment.CartilhaFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/doaco_list"
+        android:id="@+id/recycler_cartilha"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="false"
-        android:background="#E0E0E0"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_doacao" />
+        tools:listitem="@layout/item_cartilha">
+
+    </android.support.v7.widget.RecyclerView>
 
 </FrameLayout>

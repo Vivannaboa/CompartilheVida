@@ -156,10 +156,10 @@ public class HemocentrosActivity extends FragmentActivity implements
                         new AlertDialog.Builder(this).
                                 setTitle("Permissão para acessar sua localização").
                                 setMessage("Você precisa conceder permissão para acessar a sua localização." +
-                                        "Concedendo esse acesso podemos melhorar as sugestõs de hemocentros proximos a você!").show();
+                                        "Concedendo esse acesso podemos melhorar as sugestõs de hemocentros próximos a você!").show();
                     } else {
                         new AlertDialog.Builder(this).
-                                setTitle("Permissão de de acesso a localizção não concedida").
+                                setTitle("Permissão de acesso a localizção não concedida").
                                 setMessage("Infelizmente não será possivel encontrar os hemocentros próximos a você sem a permissão de localização").show();
                     }
                 }

@@ -37,8 +37,6 @@ public class TabFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_tab,null);
 
         mTabLayout=(TabLayout)v.findViewById(R.id.tabs);
-//        mAppBarLayout = (AppBarLayout) getActivity().findViewById(R.id.appbar_layout);
-//        mAppBarLayout.addView(mTabLayout, new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         viewPager=(ViewPager)v.findViewById(R.id.viewpager);
         //set an adpater;

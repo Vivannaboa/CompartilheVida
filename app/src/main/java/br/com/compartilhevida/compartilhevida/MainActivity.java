@@ -38,6 +38,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import br.com.compartilhevida.compartilhevida.fragment.CartilhaFragment;
 import br.com.compartilhevida.compartilhevida.fragment.ConfigFragment;
 import br.com.compartilhevida.compartilhevida.fragment.ContaFragment;
 import br.com.compartilhevida.compartilhevida.fragment.DoacaoFragment;
@@ -284,7 +285,7 @@ public class MainActivity extends BaseActivity
                 startActivity(new Intent(MainActivity.this, HemocentrosActivity.class));
                 break;
             case R.id.nav_cartilha_doador:
-                fragmentTransaction.replace(R.id.containerView,new TabFragment()).commit();
+                fragmentTransaction.replace(R.id.containerView,new CartilhaFragment()).commit();
                 break;
             case R.id.nav_config:
                 fragmentTransaction.replace(R.id.containerView,new ConfigFragment()).commit();

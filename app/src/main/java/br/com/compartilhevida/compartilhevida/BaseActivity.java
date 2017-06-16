@@ -10,8 +10,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -64,7 +66,7 @@ public class BaseActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         if (data == null) {
-            data =  getDateTime();
+            data = getDateTime();
         }
         return dateFormat.format(data);
     }
@@ -74,7 +76,7 @@ public class BaseActivity extends AppCompatActivity {
                 "dd/MM/yyyy", Locale.getDefault());
         dateFormat.setLenient(false);
         if (data == null) {
-            data =  getDateTime();
+            data = getDateTime();
         }
         return dateFormat.format(data);
     }
@@ -87,6 +89,19 @@ public class BaseActivity extends AppCompatActivity {
             return null;
         }
         return dateFormat.parse(string);
+    }
+
+
+    public static Calendar timestampToCalendar(Timestamp timestamp) {
+        //"2015-05-28 12:45:59";
+//        Timestamp timestamp = Timestamp.valueOf(text);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp.getTime());
+        return calendar;
+    }
+
+    public static Timestamp calendarToTimestamp(Calendar calendar){
+        return new Timestamp(calendar.getTimeInMillis());
     }
 
 }

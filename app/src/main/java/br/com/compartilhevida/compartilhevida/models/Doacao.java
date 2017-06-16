@@ -10,7 +10,7 @@ import java.util.Map;
 public class Doacao {
     private String uid;
     private String autor;
-    private String dataDoacao;
+    private Long dataDoacao;
     private String hemocentro;
     private boolean voluntaria;
     private String sexoDoador;
@@ -19,7 +19,7 @@ public class Doacao {
     public Doacao() {
     }
 
-    public Doacao(String uid, String autor, String dataDoacao, String hemocentro, boolean voluntaria) {
+    public Doacao(String uid, String autor, Long dataDoacao, String hemocentro, boolean voluntaria) {
         this.uid = uid;
         this.autor = autor;
         this.dataDoacao = dataDoacao;
@@ -38,11 +38,11 @@ public class Doacao {
         result.put("favorecido", favorecido);
         return result;
     }
-    public String getDataDoacao() {
+    public Long getDataDoacao() {
         return dataDoacao;
     }
 
-    public void setDataDoacao(String dataDoacao) {
+    public void setDataDoacao(long dataDoacao) {
         this.dataDoacao = dataDoacao;
     }
 

@@ -3,7 +3,6 @@ package br.com.compartilhevida.compartilhevida;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -31,11 +30,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.text.DateFormat;
 
 import br.com.compartilhevida.compartilhevida.models.Doacao;
 import br.com.compartilhevida.compartilhevida.models.Hemocentro;
@@ -52,6 +56,7 @@ public class DoacaoActivity extends BaseActivity implements
     private AppBarLayout appbarLayout;
     private FloatingActionButton floatingActionButton;
     private MenuItem btnSalvar;
+    static Calendar calendar = Calendar.getInstance(Locale.getDefault());
 
     //adapter
     private ArrayAdapter<String> autoComplete;
@@ -101,6 +106,7 @@ public class DoacaoActivity extends BaseActivity implements
     private void recuperaComponentes() {
         edtDataDoacao = (EditText) findViewById(R.id.edt_data_doacao);
         edtDataDoacao.setText(soDateToString(null));
+        calendar.setTime(new Date());
         edtDataDoacao.setOnClickListener(this);
         autcHemocentro = (AutoCompleteTextView) findViewById(R.id.auct_hemocentro);
         edtFavorecido = (EditText) findViewById(R.id.edt_favorecido);
@@ -144,7 +150,8 @@ public class DoacaoActivity extends BaseActivity implements
     }
 
     public static void populateSetDate(int year, int month, int day) {
-        edtDataDoacao.setText(soDateToString(new Date(month + "/" + day + "/" + year)));
+        calendar.set(year,month,day);
+        edtDataDoacao.setText(soDateToString(calendar.getTime()));
     }
 
     @Override
@@ -167,16 +174,16 @@ public class DoacaoActivity extends BaseActivity implements
             default:
                 break;
         }
-
     }
 
     private void writeNewDoacao() {
         try {
             String key = mDatabase.child("doacoes").push().getKey();
+            calendar.getTime().getTime();
             Doacao doacao = new Doacao();
             doacao.setUid(key);
             doacao.setAutor(Usuario.getInstance().getFirst_name());
-            doacao.setDataDoacao(edtDataDoacao.getText().toString());
+            doacao.setDataDoacao(new Timestamp(calendar.getTimeInMillis()).getTime());
             doacao.setHemocentro(autcHemocentro.getText().toString());
             doacao.setVoluntaria(mSwitch.isChecked());
             doacao.setFavorecido(edtFavorecido.getText().toString());
@@ -208,6 +215,7 @@ public class DoacaoActivity extends BaseActivity implements
         return ret;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -229,7 +237,6 @@ public class DoacaoActivity extends BaseActivity implements
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
@@ -242,8 +249,9 @@ public class DoacaoActivity extends BaseActivity implements
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            populateSetDate(year, month + 1, day);
+            populateSetDate(year, month, day);
         }
     }
 
