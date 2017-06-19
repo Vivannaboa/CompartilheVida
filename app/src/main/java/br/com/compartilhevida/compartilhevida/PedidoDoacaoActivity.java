@@ -73,7 +73,6 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
             Glide.with(getBaseContext()).load(getUrlPhoto()).transform(new CircleTransform(this)).into(mPhotoUser);
         }
         getSupportActionBar().setTitle("Fazer um pedido de doação");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void recuperarComponentes() {

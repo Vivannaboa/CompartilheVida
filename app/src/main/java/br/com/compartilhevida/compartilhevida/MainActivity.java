@@ -26,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
@@ -66,7 +67,8 @@ public class MainActivity extends BaseActivity
     private ImageView imageView;
     private TextView usuario;
     private TextView email;
-    TabLayout tabLayout;
+    private long lastBackPressTime = 0;
+    private Toast toast;
 
     //floating botton
     public FloatingActionButton fab;
@@ -146,7 +148,8 @@ public class MainActivity extends BaseActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         FM= getSupportFragmentManager();
-        FT= FM.beginTransaction();
+        FT = FM.beginTransaction();
+
         //o usuário do firebase só tem os dados básicos então vamos no banco pegar o restante
         if (userFirebase != null) {
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
@@ -261,8 +264,22 @@ public class MainActivity extends BaseActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        }
+        int count = FM.getBackStackEntryCount();
+        if (count == 0) {
+            if (this.lastBackPressTime < System.currentTimeMillis() - 2000) {
+                toast = Toast.makeText(this, "Pressione o Botão Voltar novamente para fechar o Aplicativo.", Toast.LENGTH_SHORT);
+                toast.show();
+                this.lastBackPressTime = System.currentTimeMillis();
+
+            } else {
+                if (toast != null) {
+                    toast.cancel();
+                }
+                super.onBackPressed();
+            }
         } else {
-            super.onBackPressed();
+            FM.popBackStack();
         }
     }
 
@@ -288,19 +305,19 @@ public class MainActivity extends BaseActivity
                 fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
                 break;
             case R.id.nav_doacao:
-                fragmentTransaction.replace(R.id.containerView, new DoacaoFragment()).commit();
+                fragmentTransaction.replace(R.id.containerView, new DoacaoFragment()).addToBackStack("Fragment").commit();
                 break;
             case R.id.nav_hemocentros:
                 startActivity(new Intent(MainActivity.this, HemocentrosActivity.class));
                 break;
             case R.id.nav_cartilha_doador:
-                fragmentTransaction.replace(R.id.containerView,new CartilhaFragment()).commit();
+                fragmentTransaction.replace(R.id.containerView,new CartilhaFragment()).addToBackStack("Fragment").commit();
                 break;
             case R.id.nav_config:
-                fragmentTransaction.replace(R.id.containerView,new ConfigFragment()).commit();
+                fragmentTransaction.replace(R.id.containerView,new ConfigFragment()).addToBackStack("Fragment").commit();
                 break;
             case R.id.nav_conta:
-                fragmentTransaction.replace(R.id.containerView,new ContaFragment()).commit();
+                fragmentTransaction.replace(R.id.containerView,new ContaFragment()).addToBackStack("Fragment").commit();
                 break;
             default:
                 break;

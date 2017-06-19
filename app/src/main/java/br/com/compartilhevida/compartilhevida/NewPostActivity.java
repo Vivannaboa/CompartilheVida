@@ -36,10 +36,9 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
     private static final String TAG = "NewPostActivity";
     private static final String REQUIRED = "Required";
+    private static final String EXTRA_POST_KEY = "post_key" ;
 
-    // [START declare_database_ref]
     private DatabaseReference mDatabase;
-    // [END declare_database_ref]
     private ImageView mPhotoUser;
     private TextView mNomeUser;
     private EditText mTitleField;
@@ -48,7 +47,14 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private Toolbar mToolbar;
     private AppBarLayout appbarLayout;
     private MenuItem btnSalvar;
+    private MenuItem btnExcluir;
     private FloatingActionButton floatingActionButton;
+
+    //para edição do post
+    private String mPostKey = "";
+    Post post;
+    private DatabaseReference mPostReference;
+    private DatabaseReference mMYPostReference;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -59,6 +65,13 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // instancia do usuário
         mUser  = Usuario.getInstance();
+
+        mPostKey = getIntent().getStringExtra(EXTRA_POST_KEY);
+        if (mPostKey!=null){
+            // Initialize Database
+            mPostReference = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
+            mMYPostReference = FirebaseDatabase.getInstance().getReference().child("user-posts").child(getUid()).child(mPostKey);
+        }
 
         mPhotoUser = (ImageView) findViewById(R.id.toolbar_logo);
         mNomeUser = (TextView) findViewById(R.id.post_author);
@@ -80,10 +93,41 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (mPostKey!=null){
+            // Add listener to post
+            mPostReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    post = dataSnapshot.getValue(Post.class);
+                    mTitleField.setText(post.getTitulo());
+                    mBodyField.setText(post.getMensagem());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    Toast.makeText(getApplicationContext(), "Falha ao carregar dados do Post.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.tolbar_footer_new_post, menu);
         btnSalvar = (MenuItem) menu.findItem(R.id.enviar_post);
+        btnExcluir = (MenuItem) menu.findItem(R.id.apagar_post);
+        if (mPostKey!=null){
+            btnExcluir.setVisible(true);
+        }
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -103,7 +147,15 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.enviar_post:
-                submitPost();
+                if (mPostKey==null){
+                    submitPost();
+                }else {
+                    updatePost();
+                }
+
+                break;
+            case R.id.apagar_post:
+                apagarPost();
                 break;
             default:
                 break;
@@ -112,19 +164,50 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
     }
 
-    private void submitPost() {
-//        final String title = mTitleField.getText().toString();
-        final String body = mBodyField.getText().toString();
-        final String titulo =  mTitleField.getText().toString();
+    private void apagarPost() {
+        setEditingEnabled(false);
+        mPostReference.removeValue();
+        mMYPostReference.removeValue();
+        setEditingEnabled(true);
+        finish();
+    }
 
-        if (!Validador.validateNotNull(mTitleField,"Informe um título para o seu post")){
+    private void updatePost() {
+        setEditingEnabled(false);
+        if (!validarDados()){
+            setEditingEnabled(true);
             return;
+        }
+        String body = mBodyField.getText().toString();
+        String titulo =  mTitleField.getText().toString();
+        post.setTitulo(titulo);
+        post.setMensagem(body);
+        mPostReference.updateChildren(post.toMap());
+        mMYPostReference.updateChildren(post.toMap());
+        setEditingEnabled(true);
+        finish();
+    }
+
+    private boolean validarDados() {
+        if (!Validador.validateNotNull(mTitleField,"Informe um título para o seu post")){
+            return false;
         }else if (!Validador.validateNotNull(mBodyField,"Você deve informar uma mensagem!")){
+            return false;
+        }
+        return true;
+    }
+
+
+    private void submitPost() {
+        setEditingEnabled(false);
+        if (!validarDados()){
+            setEditingEnabled(true);
             return;
         }
 
-        // Disable button so there are no multi-posts
-        setEditingEnabled(false);
+        final String body = mBodyField.getText().toString();
+        final String titulo =  mTitleField.getText().toString();
+
         Toast.makeText(this, "Publicando...", Toast.LENGTH_SHORT).show();
 
         // [START single_value_read]
@@ -190,7 +273,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.floating_button:
-                submitPost();
+                if (mPostKey==null){
+                    submitPost();
+                }else {
+                    updatePost();
+                }
                 break;
             default:
                 break;

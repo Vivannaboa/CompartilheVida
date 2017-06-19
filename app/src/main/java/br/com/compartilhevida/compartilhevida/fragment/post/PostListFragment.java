@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,11 +22,14 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
+import br.com.compartilhevida.compartilhevida.NewPostActivity;
 import br.com.compartilhevida.compartilhevida.PostDetailActivity;
 import br.com.compartilhevida.compartilhevida.R;
 import br.com.compartilhevida.compartilhevida.adapter.CommentAdapter;
 import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.viewholder.PostViewHolder;
+
+import static br.com.compartilhevida.compartilhevida.PostDetailActivity.EXTRA_POST_KEY;
 
 
 public abstract class PostListFragment extends Fragment {
@@ -79,6 +83,11 @@ public abstract class PostListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         // implementar a edição do post
+                        if (model.getUid().equalsIgnoreCase(getUid())){
+                           Intent it = new Intent(getContext(),NewPostActivity.class);
+                            it.putExtra(EXTRA_POST_KEY,postKey);
+                            startActivity(it);
+                        }
 
                     }
                 });
@@ -111,7 +120,7 @@ public abstract class PostListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-                        intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, postKey);
+                        intent.putExtra(EXTRA_POST_KEY, postKey);
                         startActivity(intent);
                     }
                 });
