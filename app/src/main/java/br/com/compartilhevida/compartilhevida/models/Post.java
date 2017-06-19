@@ -18,6 +18,7 @@ public class Post {
     private String titulo;
     private String mensagem;
     private String tipo;
+    private String hemocentro;
     private int coracaoCount = 0;
     private int comentariosCont =0 ;
     private Map<String, Boolean> coracao = new HashMap<>();
@@ -27,13 +28,22 @@ public class Post {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String autor, String titulo, String mensagem, String urlFoto, String tipo) {
+    public Post(String uid, String autor, String titulo, String mensagem, String urlFoto, String tipo, String hemocentro) {
         this.uid = uid;
         this.autor = autor;
         this.titulo = titulo;
         this.mensagem = mensagem;
         this.urlFoto = urlFoto;
         this.tipo = tipo;
+        this.hemocentro = hemocentro;
+    }
+
+    public Post(String uid, String autor,  String titulo, String mensagem,String urlFoto) {
+        this.uid = uid;
+        this.autor = autor;
+        this.urlFoto = urlFoto;
+        this.titulo = titulo;
+        this.mensagem = mensagem;
     }
 
     @Exclude
@@ -47,7 +57,7 @@ public class Post {
         result.put("coracao", coracao);
         result.put("urlFoto", urlFoto);
         result.put("comentariosCont", comentariosCont);
-
+        result.put("hemocentro",hemocentro);
         return result;
     }
 

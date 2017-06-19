@@ -317,7 +317,7 @@
                 android:background="@color/colorAccent"
                 android:onClick="clickEntrar"
                 android:text="@string/action_registrar"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
             <Button
@@ -329,7 +329,8 @@
                 android:onClick="clicRsetPassword"
                 android:text="@string/btn_esqueceu_senha"
                 android:textAllCaps="false"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/colorAccent"
+                android:visibility="gone" />
 
             <!-- Link to Login Screen -->
 
@@ -344,31 +345,6 @@
                 android:textAllCaps="false"
                 android:textSize="15sp" />
 
-            <Button
-                android:id="@+id/btn_sair"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@color/colorAccent"
-                android:onClick="signOut"
-                android:text="Sair"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/btn_excluir_conta"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@color/colorAccent"
-                android:onClick="clickExcluirConta"
-                android:text="Excluir Conta"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

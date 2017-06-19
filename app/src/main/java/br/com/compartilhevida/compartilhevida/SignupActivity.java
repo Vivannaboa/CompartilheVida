@@ -63,9 +63,6 @@ public class SignupActivity extends BaseActivity {
         if (mUsuario.getEmail() != null) {
             recuperarDadosDoUsuarioParaComponentes();
             editando = true;
-            findViewById(R.id.btn_sair).setVisibility(View.VISIBLE);
-            findViewById(R.id.btn_excluir_conta).setVisibility(View.VISIBLE);
-
         }
         //Nothing special, create database reference.
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
@@ -134,38 +131,38 @@ public class SignupActivity extends BaseActivity {
 
     }
 
-    public void clicRsetPassword(View v) {
-        startActivity(new Intent(SignupActivity.this, ResetPasswordActivity.class));
-    }
+//    public void clicRsetPassword(View v) {
+//        startActivity(new Intent(SignupActivity.this, ResetPasswordActivity.class));
+//    }
 
     public void clickFinish(View v) {
         finish();
     }
 
-    public void signOut(View v) {
-        FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logOut();
-        finish();
-    }
-    public void clickExcluirConta(View v) {
-        mDatabase.removeValue();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            FirebaseAuth.getInstance().getCurrentUser().delete()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(), "Seu perfil foi excluído!", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Failed to delete your account!", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
-                    });
-        }
-    }
+//    public void signOut(View v) {
+//        FirebaseAuth.getInstance().signOut();
+//        LoginManager.getInstance().logOut();
+//        finish();
+//    }
+//    public void clickExcluirConta(View v) {
+//        mDatabase.removeValue();
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//            FirebaseAuth.getInstance().getCurrentUser().delete()
+//                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+//                                Toast.makeText(getApplicationContext(), "Seu perfil foi excluído!", Toast.LENGTH_SHORT).show();
+//                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+//
+//                            } else {
+//                                Toast.makeText(getApplicationContext(), "Failed to delete your account!", Toast.LENGTH_SHORT).show();
+//
+//                            }
+//                        }
+//                    });
+//        }
+//    }
 
     public void selectDate(View view) {
         DialogFragment newFragment = new SelectDateFragment();
@@ -297,7 +294,7 @@ public class SignupActivity extends BaseActivity {
     }
 
     private void adicionarUsuario() {
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mDatabase.child(mUsuario.getUid()).setValue(mUsuario.toMap());

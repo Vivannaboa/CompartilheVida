@@ -80,6 +80,10 @@
         <activity
             android:name=".DoacaoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PedidoDoacaoActivity"
+            android:label="@string/title_activity_pedido_doacao"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -191,9 +191,9 @@ public class HemocentrosActivity extends FragmentActivity implements
                     mLocation2 = new LatLng(hemocentro.getLat(), hemocentro.getLng());
                 } else {
                     if (hemocentro.getEndereco()!=null) {
-                        if (!hemocentro.getEndereco().isEmpty()) {
-                            mLocation2 = pegaCoordenadaDoEndereco(hemocentro.getEndereco());
-                        }
+//                        if (!hemocentro.getEndereco().isEmpty()) {
+//                            mLocation2 = pegaCoordenadaDoEndereco(hemocentro.getEndereco());
+//                        }
                     }
                     if (mLocation2 != null) {
                         hemocentro.setLat(mLocation2.latitude);

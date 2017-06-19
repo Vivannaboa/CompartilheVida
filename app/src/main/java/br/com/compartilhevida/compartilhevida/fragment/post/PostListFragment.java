@@ -31,29 +31,22 @@ import br.com.compartilhevida.compartilhevida.viewholder.PostViewHolder;
 public abstract class PostListFragment extends Fragment {
 
     private static final String TAG = "PostListFragment";
-
-    // [START define_database_reference]
     private DatabaseReference mDatabase;
-    // [END define_database_reference]
-
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
 
-    public PostListFragment() {}
+    public PostListFragment() {
+    }
 
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
-
-        // [START create_database_reference]
+        //create_database_reference
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END create_database_reference]
-
         mRecycler = (RecyclerView) rootView.findViewById(R.id.messages_list);
         mRecycler.setHasFixedSize(true);
-
         return rootView;
     }
 
@@ -61,13 +54,13 @@ public abstract class PostListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Set up Layout Manager, reverse layout
+        //Configurar Layout Manager, layout reverso
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
 
-        // Set up FirebaseRecyclerAdapter with the Query
+        // Configura o FirebaseRecyclerAdapter com a Consulta
         Query postsQuery = getQuery(mDatabase);
         mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(Post.class, R.layout.item_post,
                 PostViewHolder.class, postsQuery) {
@@ -75,9 +68,9 @@ public abstract class PostListFragment extends Fragment {
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, final int position) {
                 final DatabaseReference postRef = getRef(position);
 
-                // Set click listener for the whole post view
+                // Definir o ouvinte de clique para toda a visualização de postagem
                 final String postKey = postRef.getKey();
-                final DatabaseReference mCommentsReference =  FirebaseDatabase.getInstance().getReference()
+                final DatabaseReference mCommentsReference = FirebaseDatabase.getInstance().getReference()
                         .child("post-comments").child(postKey);
                 CommentAdapter commentAdapter = new CommentAdapter(getActivity(), mCommentsReference);
                 viewHolder.mCommentsRecycler.setAdapter(commentAdapter);
@@ -85,19 +78,19 @@ public abstract class PostListFragment extends Fragment {
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Launch PostDetailActivity
+                        // implementar a edição do post
 
                     }
                 });
 
-                // Determine if the current user has liked this post and set UI accordingly
+                // Determine se o usuário atual gostou desta publicação e configurou a IU de acordo
                 if (model.getCoracao().containsKey(getUid())) {
                     viewHolder.starView.setImageResource(R.drawable.ic_favorite_red_24dp);
                 } else {
                     viewHolder.starView.setImageResource(R.drawable.ic_favorite_border_red_24dp);
                 }
 
-                // Bind Post to ViewHolder, setting OnClickListener for the star button
+                // Bind Post to ViewHolder, definindo OnClickListener para o botão estrela, comentário,compartilhar
                 viewHolder.bindToPost(model, new View.OnClickListener() {
                     @Override
                     public void onClick(View starView) {
@@ -106,8 +99,8 @@ public abstract class PostListFragment extends Fragment {
                         DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.getUid()).child(postRef.getKey());
 
                         // Run two transactions
-                        onStarClicked(globalPostRef);
-                        onStarClicked(userPostRef);
+                        onHeartClicked(globalPostRef);
+                        onHeartClicked(userPostRef);
                     }
                 }, new View.OnClickListener() {
                     @Override
@@ -154,8 +147,8 @@ public abstract class PostListFragment extends Fragment {
     }
 
 
-    // [START post_stars_transaction]
-    private void onStarClicked(DatabaseReference postRef) {
+    // inicia a transação de clique no icone coração
+    private void onHeartClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -163,18 +156,17 @@ public abstract class PostListFragment extends Fragment {
                 if (p == null) {
                     return Transaction.success(mutableData);
                 }
-
                 if (p.getCoracao().containsKey(getUid())) {
-                    // Unstar the post and remove self from stars
-                    p.setCoracaoCount(p.getCoracaoCount() -1);
+                    // Não marque a postagem e remova o coração
+                    p.setCoracaoCount(p.getCoracaoCount() - 1);
                     p.getCoracao().remove(getUid());
                 } else {
-                    // Star the post and add self to stars
-                    p.setCoracaoCount(p.getCoracaoCount() +1);
+                    // Marque o post e adicione-se aos corações
+                    p.setCoracaoCount(p.getCoracaoCount() + 1);
                     p.getCoracao().put(getUid(), true);
                 }
 
-                // Set value and report transaction success
+                // Defina valor e relate o sucesso da transação
                 mutableData.setValue(p);
                 return Transaction.success(mutableData);
             }
@@ -182,12 +174,11 @@ public abstract class PostListFragment extends Fragment {
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
-                // Transaction completed
+                // deu tudo certo mostra um log
                 Log.d(TAG, "postTransaction:onComplete:" + databaseError);
             }
         });
     }
-    // [END post_stars_transaction]
 
     @Override
     public void onDestroy() {
@@ -198,9 +189,9 @@ public abstract class PostListFragment extends Fragment {
     }
 
     public String getUid() {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             return null;
-        }else {
+        } else {
             return FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
     }

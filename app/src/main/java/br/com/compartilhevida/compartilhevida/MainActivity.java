@@ -53,7 +53,6 @@ public class MainActivity extends BaseActivity
         NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, ContaFragment.OnFragmentInteractionListener {
 
-    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 10;
     private static final String TAG = "MainActivity";
     private static final int RESULT_DOACAO = 1;
 
@@ -73,6 +72,7 @@ public class MainActivity extends BaseActivity
     public FloatingActionButton fab;
     public LinearLayout fab1;
     public LinearLayout fab2;
+    public LinearLayout fab3;
     public FrameLayout frameFlatButtom;
 
     //Animations
@@ -80,6 +80,8 @@ public class MainActivity extends BaseActivity
     private Animation hide_fab_1;
     private Animation show_fab_2;
     private Animation hide_fab_2;
+    private Animation show_fab_3;
+    private Animation hide_fab_3;
 
     //flag que controla se os botões fabs estão abertos
     private boolean FAB_Status = false;
@@ -103,6 +105,7 @@ public class MainActivity extends BaseActivity
 
         //pega o usuário corrente do firebase
         userFirebase = FirebaseAuth.getInstance().getCurrentUser();
+
         //cria um listner que verifica se tem um usuário logado
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -121,18 +124,20 @@ public class MainActivity extends BaseActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         //Floating Action Buttons
         frameFlatButtom = (FrameLayout) findViewById(R.id.frameFlatButtom);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab1 = (LinearLayout) findViewById(R.id.fab_1);
         fab2 = (LinearLayout) findViewById(R.id.fab_2);
+        fab3 = (LinearLayout) findViewById(R.id.fab_3);
 
         //Animations
         show_fab_1 = loadAnimation(getApplication(), R.anim.fab1_show);
         hide_fab_1 = loadAnimation(getApplication(), R.anim.fab1_hide);
         show_fab_2 = loadAnimation(getApplication(), R.anim.fab2_show);
         hide_fab_2 = loadAnimation(getApplication(), R.anim.fab2_hide);
+        show_fab_3 = loadAnimation(getApplication(), R.anim.fab3_show);
+        hide_fab_3 = loadAnimation(getApplication(), R.anim.fab3_hide);
         fab.setOnClickListener(this);
 
 
@@ -147,7 +152,7 @@ public class MainActivity extends BaseActivity
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
             FT.replace(R.id.containerView, new TabFragment()).commit();
         }
-        
+
         navigationView.setNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -222,6 +227,10 @@ public class MainActivity extends BaseActivity
                             });
                             AlertDialog dialog = builder.create();
                             dialog.show();
+                        }else{
+                            if (mUserEventListener!= null){
+                                mUserDatabase.removeEventListener(mUserEventListener);
+                            }
                         }
                     }
                 }
@@ -291,7 +300,7 @@ public class MainActivity extends BaseActivity
                 fragmentTransaction.replace(R.id.containerView,new ConfigFragment()).commit();
                 break;
             case R.id.nav_conta:
-                startActivity(new Intent(this,SignupActivity.class));
+                fragmentTransaction.replace(R.id.containerView,new ContaFragment()).commit();
                 break;
             default:
                 break;
@@ -342,6 +351,12 @@ public class MainActivity extends BaseActivity
                 hideFAB();
                 FAB_Status = false;
                 break;
+            case R.id.fab_3:
+                startActivity(new Intent(MainActivity.this, PedidoDoacaoActivity.class));
+                //Close FAB menu
+                hideFAB();
+                FAB_Status = false;
+                break;
             case R.id.frameFlatButtom:
                 hideFAB();
                 FAB_Status = false;
@@ -372,6 +387,15 @@ public class MainActivity extends BaseActivity
         fab2.setClickable(true);
         fab2.setOnClickListener(this);
 
+        //Floating Action Button 3
+        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) fab3.getLayoutParams();
+        //layoutParams3.rightMargin += (int) fab3.getWidth();;
+        layoutParams3.bottomMargin += (int) (fab3.getHeight() * 2.4);
+        fab3.setLayoutParams(layoutParams3);
+        fab3.startAnimation(show_fab_3);
+        fab3.setClickable(true);
+        fab3.setOnClickListener(this);
+
         frameFlatButtom.setBackgroundColor(Color.parseColor("#d0ffffff"));
         frameFlatButtom.setOnClickListener(this);
     }
@@ -393,6 +417,14 @@ public class MainActivity extends BaseActivity
         fab2.startAnimation(hide_fab_2);
         fab2.setClickable(false);
 
+        //Floating Action Button 3
+        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) fab3.getLayoutParams();
+        //layoutParams3.rightMargin -= (int) fab3.getWidth();
+        layoutParams3.bottomMargin -= (int) (fab3.getHeight() * 2.4);
+        fab3.setLayoutParams(layoutParams3);
+        fab3.startAnimation(hide_fab_3);
+        fab3.setClickable(false);
+
         frameFlatButtom.setBackgroundColor(Color.TRANSPARENT);
         frameFlatButtom.setClickable(false);
     }
@@ -413,4 +445,5 @@ public class MainActivity extends BaseActivity
         }
 
     }
+
 }

@@ -45,6 +45,9 @@ public class BaseActivity extends AppCompatActivity {
     public Uri getUrlPhoto() {
         return FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
     }
+    public String getDisplayNome(){
+        return FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+    }
 
     @Nullable
     public static Drawable loadImageFromWebOperations(String url) {

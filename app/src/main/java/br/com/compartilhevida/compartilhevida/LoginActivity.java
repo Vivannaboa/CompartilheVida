@@ -314,6 +314,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(mAuthListener);
+
     }
 
     public void goMainScreen() {
@@ -396,7 +397,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void adicionarUsuario() {
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mDatabase.child("users").child(user.getUid()).setValue(user.toMap());

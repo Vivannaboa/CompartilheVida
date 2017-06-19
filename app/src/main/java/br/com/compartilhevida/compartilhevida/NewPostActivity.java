@@ -3,6 +3,7 @@ package br.com.compartilhevida.compartilhevida;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,8 +30,9 @@ import java.util.Map;
 import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.models.Usuario;
 import br.com.compartilhevida.compartilhevida.util.CircleTransform;
+import br.com.compartilhevida.compartilhevida.util.Validador;
 
-public class NewPostActivity extends BaseActivity {
+public class NewPostActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "NewPostActivity";
     private static final String REQUIRED = "Required";
@@ -41,44 +44,58 @@ public class NewPostActivity extends BaseActivity {
     private TextView mNomeUser;
     private EditText mTitleField;
     private EditText mBodyField;
-    private FloatingActionButton mSubmitButton;
     private Usuario mUser;
     private Toolbar mToolbar;
+    private AppBarLayout appbarLayout;
+    private MenuItem btnSalvar;
+    private FloatingActionButton floatingActionButton;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
-
-        // [START initialize_database_ref]
+        //referencia do banco
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END initialize_database_ref]
+        // instancia do usuário
         mUser  = Usuario.getInstance();
 
         mPhotoUser = (ImageView) findViewById(R.id.toolbar_logo);
         mNomeUser = (TextView) findViewById(R.id.post_author);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_post);
         mTitleField =(EditText) findViewById(R.id.title_view);
-        mBodyField = (EditText)findViewById(R.id.edtBodyField) ;
+        mBodyField = (EditText)findViewById(R.id.edtBodyField);
+        appbarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.floating_button);
+        floatingActionButton.setOnClickListener(this);
         setSupportActionBar(mToolbar);
         if (mUser!=null){
             mNomeUser.setText(mUser.getFirst_name());
         }
         if (getUrlPhoto()!=null){
             Glide.with(getBaseContext()).load(getUrlPhoto()).transform(new CircleTransform(this)).into(mPhotoUser);
-
         }
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.tolbar_footer_new_post, menu);
+        btnSalvar = (MenuItem) menu.findItem(R.id.enviar_post);
+        appbarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                float percentage = ((float) Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange());
+                Log.i(TAG, (String.valueOf(percentage)));
+                if (percentage >= 0.51428574) {
+                    btnSalvar.setVisible(true);
+                } else {
+                    btnSalvar.setVisible(false);
+                }
+            }
+        });
         return true;
     }
 
@@ -100,20 +117,15 @@ public class NewPostActivity extends BaseActivity {
         final String body = mBodyField.getText().toString();
         final String titulo =  mTitleField.getText().toString();
 
-        // Body is required
-        if (TextUtils.isEmpty(body)) {
-            mBodyField.setError(REQUIRED);
+        if (!Validador.validateNotNull(mTitleField,"Informe um título para o seu post")){
             return;
-        }
-        // Body is required
-        if (TextUtils.isEmpty(titulo)) {
-            mTitleField.setError(REQUIRED);
+        }else if (!Validador.validateNotNull(mBodyField,"Você deve informar uma mensagem!")){
             return;
         }
 
         // Disable button so there are no multi-posts
         setEditingEnabled(false);
-        Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Publicando...", Toast.LENGTH_SHORT).show();
 
         // [START single_value_read]
         final String userId = getUid();
@@ -133,46 +145,38 @@ public class NewPostActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
-                            writeNewPost(userId, user.getFirst_name(), titulo ,body,"informat o tipo");
+                            writeNewPost(userId, user.getFirst_name(), titulo ,body);
                         }
-
-                        // Finish this Activity, back to the stream
                         setEditingEnabled(true);
                         finish();
-                        // [END_EXCLUDE]
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                        // [START_EXCLUDE]
                         setEditingEnabled(true);
-                        // [END_EXCLUDE]
                     }
                 });
         // [END single_value_read]
     }
 
     private void setEditingEnabled(boolean enabled) {
-//        mTitleField.setEnabled(enabled);
         mBodyField.setEnabled(enabled);
-//        if (enabled) {
-//            mSubmitButton.setVisibility(View.VISIBLE);
-//        } else {
-//            mSubmitButton.setVisibility(View.GONE);
-//        }
+        mTitleField.setEnabled(enabled);
+        floatingActionButton.setEnabled(enabled);
+        btnSalvar.setEnabled(enabled);
     }
 
-    // [START write_fan_out]
-    private void writeNewPost(String userId, String username, String titulo, String body,String tipo) {
+    // Aqui a mágica acontece
+    private void writeNewPost(String userId, String username, String titulo, String body) {
        String urlPhoto = "";
         if (getUrlPhoto()!=null){
             urlPhoto = getUrlPhoto().toString();
         }
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
+        // Cria um novo post em /user-posts/$userid/$postid
+        // e ao mesmo tempo  adiciona em /posts/$postid
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username,titulo, body,urlPhoto, tipo);
+        Post post = new Post(userId, username,titulo, body,urlPhoto);
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -181,5 +185,17 @@ public class NewPostActivity extends BaseActivity {
 
         mDatabase.updateChildren(childUpdates);
     }
-    // [END write_fan_out]
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.floating_button:
+                submitPost();
+                break;
+            default:
+                break;
+        }
+
+    }
+
 }

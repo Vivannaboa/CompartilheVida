@@ -57,11 +57,9 @@ public class DoacaoActivity extends BaseActivity implements
     private FloatingActionButton floatingActionButton;
     private MenuItem btnSalvar;
     static Calendar calendar = Calendar.getInstance(Locale.getDefault());
-
     //adapter
     private ArrayAdapter<String> autoComplete;
     private List<Hemocentro> hemocentroList = new ArrayList<>();
-
     //base de dados
     DatabaseReference mDatabase;
 

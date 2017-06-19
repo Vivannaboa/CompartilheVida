@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import br.com.compartilhevida.compartilhevida.models.Usuario;
 import br.com.compartilhevida.compartilhevida.LoginActivity;
@@ -27,14 +28,14 @@ import br.com.compartilhevida.compartilhevida.R;
 
 
 public class ContaFragment extends Fragment {
-    private Button  btnSendResetEmail, btnRemoveUser,
-             sendEmail, remove, signOut;
+    private Button btnSendResetEmail, btnRemoveUser,
+            signOut;
 
-    private EditText oldEmail;
+    private EditText email;
     private ProgressBar progressBar;
     private FirebaseUser userFirebase;
     private FirebaseAuth mAuth;
-    private static DatabaseReference mUserDatabase = null;
+    private DatabaseReference mUserDatabase;
 
 
     private OnFragmentInteractionListener mListener;
@@ -43,12 +44,6 @@ public class ContaFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ContaFragment newInstance(DatabaseReference param1) {
-        ContaFragment fragment = new ContaFragment();
-        Bundle args = new Bundle();
-        mUserDatabase =  param1;
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,75 +53,47 @@ public class ContaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View viewConta =  inflater.inflate(R.layout.fragment_conta, container, false);
+        View viewConta = inflater.inflate(R.layout.fragment_conta, container, false);
         userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         mAuth = FirebaseAuth.getInstance();
-        btnSendResetEmail = (Button)  viewConta.findViewById(R.id.sending_pass_reset_button);
-        btnRemoveUser = (Button)  viewConta.findViewById(R.id.remove_user_button);
-        sendEmail = (Button)  viewConta.findViewById(R.id.send);
-        remove = (Button)  viewConta.findViewById(R.id.remove);
-        signOut = (Button)  viewConta.findViewById(R.id.sign_out);
+        btnSendResetEmail = (Button) viewConta.findViewById(R.id.sending_pass_reset_button);
+        btnRemoveUser = (Button) viewConta.findViewById(R.id.remove_user_button);
+        signOut = (Button) viewConta.findViewById(R.id.sign_out);
 
-        oldEmail = (EditText)  viewConta.findViewById(R.id.old_email);
+        email = (EditText) viewConta.findViewById(R.id.email);
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userFirebase.getUid());
 
-        oldEmail.setVisibility(View.GONE);
-        sendEmail.setVisibility(View.GONE);
-        remove.setVisibility(View.GONE);
+        email.setVisibility(View.GONE);
 
-        progressBar = (ProgressBar)  viewConta.findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) viewConta.findViewById(R.id.progressBar);
 
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
-        if(Usuario.getInstance().getProvider()!= null) {
+        if (Usuario.getInstance().getProvider() != null) {
             if (!Usuario.getInstance().getProvider().equalsIgnoreCase("email")) {
                 btnSendResetEmail.setVisibility(View.GONE);
             }
-        }else{
+        } else {
             btnSendResetEmail.setVisibility(View.GONE);
         }
 
         btnSendResetEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                oldEmail.setVisibility(View.VISIBLE);
-                sendEmail.setVisibility(View.VISIBLE);
-                remove.setVisibility(View.GONE);
-            }
-        });
-
-        sendEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                if (!oldEmail.getText().toString().trim().equals("")) {
-                    mAuth.sendPasswordResetEmail(oldEmail.getText().toString().trim())
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getActivity(), "Email de redefinição de senha enviado", Toast.LENGTH_SHORT).show();
-                                        progressBar.setVisibility(View.GONE);
-                                    } else {
-                                        Toast.makeText(getActivity(), "Falha ao enviar e-mail de redefinição!", Toast.LENGTH_SHORT).show();
-                                        progressBar.setVisibility(View.GONE);
-                                    }
-                                }
-                            });
-                } else {
-                    oldEmail.setError("Enter email");
-                    progressBar.setVisibility(View.GONE);
-                }
+                email.setVisibility(View.VISIBLE);
             }
         });
 
         btnRemoveUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 progressBar.setVisibility(View.VISIBLE);
                 mUserDatabase.removeValue();
-                if (userFirebase != null) {
-                    userFirebase.delete()
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    user.delete()
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -150,7 +117,7 @@ public class ContaFragment extends Fragment {
                 signOut();
             }
         });
-return viewConta;
+        return viewConta;
     }
 
     //sign out method
