@@ -21,6 +21,13 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="0dp">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Em desenvolvimento"
+            android:textAlignment="center" />
+
         <EditText
             android:id="@+id/email"
             android:layout_width="match_parent"
