@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.text.DateFormat;
 
 import br.com.compartilhevida.compartilhevida.models.Doacao;
 import br.com.compartilhevida.compartilhevida.models.Hemocentro;
@@ -80,7 +79,7 @@ public class DoacaoActivity extends BaseActivity implements
 
     private void listnerAutoComplet() {
         autoComplete = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-        mDatabase.child("hemocentros").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("hemocentros").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
@@ -105,7 +104,6 @@ public class DoacaoActivity extends BaseActivity implements
         edtDataDoacao = (EditText) findViewById(R.id.edt_data_doacao);
         edtDataDoacao.setText(soDateToString(null));
         calendar.setTime(new Date());
-        edtDataDoacao.setOnClickListener(this);
         autcHemocentro = (AutoCompleteTextView) findViewById(R.id.auct_hemocentro);
         edtFavorecido = (EditText) findViewById(R.id.edt_favorecido);
         mSwitch = (Switch) findViewById(R.id.mSwitch);
@@ -147,7 +145,7 @@ public class DoacaoActivity extends BaseActivity implements
         }
     }
 
-    public static void populateSetDate(int year, int month, int day) {
+    private static void populateSetDate(int year, int month, int day) {
         calendar.set(year,month,day);
         edtDataDoacao.setText(soDateToString(calendar.getTime()));
     }

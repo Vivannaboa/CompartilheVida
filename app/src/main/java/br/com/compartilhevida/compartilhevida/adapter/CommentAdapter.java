@@ -42,7 +42,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
 
         // Create child event listener
         // [START child_event_listener_recycler]
-        ChildEventListener childEventListener = new ChildEventListener() {
+        final ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
@@ -119,16 +119,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-                Toast.makeText(mContext, "Failed to load comments.",
-                        Toast.LENGTH_SHORT).show();
             }
         };
         ref.addChildEventListener(childEventListener);
         // [END child_event_listener_recycler]
 
-        // Store reference to listener so it can be removed on app stop
         mChildEventListener = childEventListener;
     }
+
 
     @Override
     public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -145,7 +143,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
         if (comment.getUrlFoto()!=null) {
             if (!comment.getUrlFoto().toString().isEmpty()) {
                 Glide.with(mContext).load(comment.getUrlFoto()).transform(new CircleTransform(mContext)).into(holder.pothoAutor);
+            }else{
+                Glide.with(mContext).load(R.drawable.ic_action_account_circle_40).transform(new CircleTransform(mContext)).into(holder.pothoAutor);
             }
+        }else{
+            Glide.with(mContext).load(R.drawable.ic_action_account_circle_40).transform(new CircleTransform(mContext)).into(holder.pothoAutor);
         }
     }
 

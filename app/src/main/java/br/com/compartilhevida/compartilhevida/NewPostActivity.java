@@ -259,7 +259,7 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         // Cria um novo post em /user-posts/$userid/$postid
         // e ao mesmo tempo  adiciona em /posts/$postid
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username,titulo, body,urlPhoto);
+        Post post = new Post(userId, username,titulo, body,urlPhoto,"post");
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

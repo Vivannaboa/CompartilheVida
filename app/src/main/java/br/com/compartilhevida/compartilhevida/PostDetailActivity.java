@@ -100,6 +100,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 mBodyView.setText(post.getMensagem());
                 if (!post.getUrlFoto().toString().isEmpty()) {
                     Glide.with(getApplicationContext()).load(post.getUrlFoto()).transform(new CircleTransform(getApplicationContext())).into(imageView);
+                }else{
+                    Glide.with(getApplicationContext()).load(R.drawable.ic_action_account_circle_40).transform(new CircleTransform(getApplicationContext())).into(imageView);
                 }
             }
 
@@ -132,6 +134,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         // Clean up comments listener
         mAdapter.cleanupListener();
     }
+
 
     @Override
     public void onClick(View v) {

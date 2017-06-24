@@ -15,4 +15,11 @@
         android:scrollbars="vertical"
         tools:listitem="@layout/item_doacao" />
 
+    <TextView
+        android:id="@+id/txt_nenhuma_doacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Você ainda não possui nenhuma doação registrada" />
+
 </FrameLayout>

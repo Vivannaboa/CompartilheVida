@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +21,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +44,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import br.com.compartilhevida.compartilhevida.adapter.CommentAdapter;
 import br.com.compartilhevida.compartilhevida.fragment.CartilhaFragment;
 import br.com.compartilhevida.compartilhevida.fragment.ConfigFragment;
 import br.com.compartilhevida.compartilhevida.fragment.ContaFragment;
@@ -99,6 +108,23 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "br.com.compartilhevida.compartilhevida",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+
+
         //pega instancia de usuário
         mUsuario = Usuario.getInstance();
 
@@ -163,7 +189,6 @@ public class MainActivity extends BaseActivity
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-
         View hView = navigationView.getHeaderView(0);
         imageView = (ImageView) hView.findViewById(R.id.imageViewUsuario);
         usuario = (TextView) hView.findViewById(R.id.textViewUsuario);
@@ -173,6 +198,9 @@ public class MainActivity extends BaseActivity
 
     private boolean verificaDadosPendendtes() {
         boolean ret = true;
+        if (CompartilheVida.jaVerificou){
+            return true;
+        }
         if (mUsuario.getBirthday() == null) {
             ret = false;
         }
@@ -189,7 +217,6 @@ public class MainActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
        hideProgressDialog();
-
     }
 
     @Override
@@ -212,9 +239,10 @@ public class MainActivity extends BaseActivity
                         mUsuario.setProvider(usuario.getProvider());
                         carregaUsuario(usuario);
                         if (!verificaDadosPendendtes()) {
+                            CompartilheVida.jaVerificou = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setMessage("Olá " + usuario.getFirst_name() + ", gostariamos de lhe conhecer melhor! " + "\n" + " Deseja concluir seu cadastro agora?")
-                                    .setTitle("Competar cadastro");
+                                    .setTitle("Completar cadastro");
                             builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -257,6 +285,7 @@ public class MainActivity extends BaseActivity
         if (mUserEventListener!= null){
             mUserDatabase.removeEventListener(mUserEventListener);
         }
+
     }
 
     @Override
@@ -271,7 +300,6 @@ public class MainActivity extends BaseActivity
                 toast = Toast.makeText(this, "Pressione o Botão Voltar novamente para fechar o Aplicativo.", Toast.LENGTH_SHORT);
                 toast.show();
                 this.lastBackPressTime = System.currentTimeMillis();
-
             } else {
                 if (toast != null) {
                     toast.cancel();
@@ -327,7 +355,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(this, "Sem conexão com a Internet!", Toast.LENGTH_SHORT).show();
     }
 
     private void carregaUsuario(Usuario user) {

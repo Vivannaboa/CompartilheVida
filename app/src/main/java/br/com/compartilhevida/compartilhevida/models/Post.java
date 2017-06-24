@@ -18,7 +18,10 @@ public class Post {
     private String titulo;
     private String mensagem;
     private String tipo;
+    private String tipo_sanguineo;
     private String hemocentro;
+    private String data_limite_doacao;
+    private String favorecido;
     private int coracaoCount = 0;
     private int comentariosCont =0 ;
     private Map<String, Boolean> coracao = new HashMap<>();
@@ -28,22 +31,26 @@ public class Post {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String autor, String titulo, String mensagem, String urlFoto, String tipo, String hemocentro) {
+    public Post(String uid, String autor, String titulo, String mensagem, String urlFoto, String tipo_sanguineo, String hemocentro,String data_limite_doacao,String favorecido,String tipo) {
         this.uid = uid;
         this.autor = autor;
         this.titulo = titulo;
         this.mensagem = mensagem;
         this.urlFoto = urlFoto;
         this.tipo = tipo;
+        this.tipo_sanguineo=tipo_sanguineo;
         this.hemocentro = hemocentro;
+        this.data_limite_doacao =data_limite_doacao;
+        this.favorecido=favorecido;
     }
 
-    public Post(String uid, String autor,  String titulo, String mensagem,String urlFoto) {
+    public Post(String uid, String autor,  String titulo, String mensagem,String urlFoto,String tipo) {
         this.uid = uid;
         this.autor = autor;
         this.urlFoto = urlFoto;
         this.titulo = titulo;
         this.mensagem = mensagem;
+        this.tipo = tipo;
     }
 
     @Exclude
@@ -58,6 +65,10 @@ public class Post {
         result.put("urlFoto", urlFoto);
         result.put("comentariosCont", comentariosCont);
         result.put("hemocentro",hemocentro);
+        result.put("favorecido",favorecido);
+        result.put("data_limite_doacao",data_limite_doacao);
+        result.put("tipo",tipo);
+        result.put("tipo_sanguineo",tipo_sanguineo);
         return result;
     }
 
@@ -138,5 +149,37 @@ public class Post {
 
     public void setComentariosCont(int comentariosCont) {
         this.comentariosCont = comentariosCont;
+    }
+
+    public String getTipo_sanguineo() {
+        return tipo_sanguineo;
+    }
+
+    public void setTipo_sanguineo(String tipo_sanguineo) {
+        this.tipo_sanguineo = tipo_sanguineo;
+    }
+
+    public String getHemocentro() {
+        return hemocentro;
+    }
+
+    public void setHemocentro(String hemocentro) {
+        this.hemocentro = hemocentro;
+    }
+
+    public String getData_limite_doacao() {
+        return data_limite_doacao;
+    }
+
+    public void setData_limite_doacao(String data_limite_doacao) {
+        this.data_limite_doacao = data_limite_doacao;
+    }
+
+    public String getFavorecido() {
+        return favorecido;
+    }
+
+    public void setFavorecido(String favorecido) {
+        this.favorecido = favorecido;
     }
 }

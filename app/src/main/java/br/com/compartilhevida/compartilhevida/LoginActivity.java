@@ -17,6 +17,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -333,28 +334,33 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void accessLoginData(String provider, String... tokens) {
         if (tokens != null && tokens.length > 0 && tokens[0] != null) {
 
-            AuthCredential credential = FacebookAuthProvider.getCredential(tokens[0]);
+           AuthCredential credential = FacebookAuthProvider.getCredential(tokens[0]);
             credential = provider.equalsIgnoreCase("google") ? GoogleAuthProvider.getCredential(tokens[0], null) : credential;
             user.setProvider(provider);
 
-            mAuth.signInWithCredential(credential)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                mAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                            if (!task.isSuccessful()) {
-                                hideProgressDialog();
-                                Toast.makeText(LoginActivity.this, "Não foi possvel entrar!", Toast.LENGTH_SHORT).show();
+                                if (!task.isSuccessful()) {
+                                    hideProgressDialog();
+                                    if (task.getException().getMessage().equalsIgnoreCase("An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.")){
+                                        Toast.makeText(LoginActivity.this, "Já existe uma conta com esse email cadastrado." , Toast.LENGTH_LONG).show();
+                                        LoginManager.getInstance().logOut();
+                                    }
+                                    Toast.makeText(LoginActivity.this, "Não foi possvel entrar!", Toast.LENGTH_SHORT).show();
 
+                                }
                             }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            FirebaseCrash.report(e);
-                        }
-                    });
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                FirebaseCrash.report(e);
+                            }
+                        });
+
         } else {
             mAuth.signOut();
         }

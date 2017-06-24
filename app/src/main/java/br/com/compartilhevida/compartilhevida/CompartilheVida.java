@@ -9,6 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
  * Created by vivan on 27/03/2017.
  */
 public class CompartilheVida extends Application {
+    public static boolean jaVerificou = false;
     @Override
     public void onCreate() {
         super.onCreate();

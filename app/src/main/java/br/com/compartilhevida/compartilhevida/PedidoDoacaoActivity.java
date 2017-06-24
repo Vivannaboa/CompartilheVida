@@ -1,8 +1,13 @@
 package br.com.compartilhevida.compartilhevida;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -10,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -25,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +41,8 @@ import br.com.compartilhevida.compartilhevida.models.Post;
 import br.com.compartilhevida.compartilhevida.models.Usuario;
 import br.com.compartilhevida.compartilhevida.util.CircleTransform;
 import br.com.compartilhevida.compartilhevida.util.Validador;
+
+import static br.com.compartilhevida.compartilhevida.DoacaoActivity.calendar;
 
 public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickListener {
 
@@ -45,10 +54,11 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
     private FloatingActionButton mFloatingActionButton;
     private ImageView mPhotoUser;
     private TextView mNomeUser;
-//    private EditText mEdtFavorecido;
     private AutoCompleteTextView mAutHemocentro;
     private Spinner mSpnSanguineo;
     private EditText mBodyField;
+    private EditText mEdtFavorecido;
+    private static EditText edtDataLimiteDoacao;
 
     //adapter
     private ArrayAdapter<String> autoComplete;
@@ -76,21 +86,49 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void recuperarComponentes() {
+        edtDataLimiteDoacao = (EditText) findViewById(R.id.edt_data_limite_doacao);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_pedido);
         mPhotoUser = (ImageView) findViewById(R.id.toolbar_logo);
         mNomeUser = (TextView) findViewById(R.id.post_author);
-//        mEdtFavorecido =(EditText) findViewById(R.id.edt_favorecido);
+        mEdtFavorecido =(EditText) findViewById(R.id.edt_favorecido);
         mAutHemocentro= (AutoCompleteTextView)findViewById(R.id.auct_hemocentro);
         mSpnSanguineo = (Spinner) findViewById(R.id.spinnerTipoSanguineo);
         mBodyField = (EditText)findViewById(R.id.edtBodyField);
         appbarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        edtDataLimiteDoacao.setText(soDateToString(null));
         mFloatingActionButton.setOnClickListener(this);
+        edtDataLimiteDoacao.setOnClickListener(this);
+    }
+
+    private static void populateSetDate(int year, int month, int day) {
+        calendar.set(year,month,day);
+        edtDataLimiteDoacao.setText(soDateToString(calendar.getTime()));
+    }
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            populateSetDate(year, month, day);
+        }
     }
 
     private void listnerAutoComplet() {
         autoComplete = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-        mDatabase.child("hemocentros").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("hemocentros").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
@@ -114,7 +152,7 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
     private void setEditingEnabled(boolean enabled) {
         mAutHemocentro.setEnabled(enabled);
         mSpnSanguineo.setEnabled(enabled);
-//        mEdtFavorecido.setEnabled(enabled);
+        mEdtFavorecido.setEnabled(enabled);
         mFloatingActionButton.setEnabled(enabled);
         btnSalvar.setEnabled(enabled);
     }
@@ -145,6 +183,11 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
             case R.id.fab:
                 submitPost();
                 break;
+            case R.id.edt_data_limite_doacao:
+                Log.i(TAG, "Clicou na data da doação");
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+                break;
             default:
                 break;
         }
@@ -170,14 +213,15 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
         if (!Validador.validateNotNull(mAutHemocentro, "Informe em qual hemocentro o doador deve doar!")){
             return false;
         }
+        if (!Validador.validateNotNull(mEdtFavorecido,"Informe o nome do paciente favorecido ou do próprio hemocentro!")){
+            return false;
+        }
         if (!verificarCadastroHemocentro(mAutHemocentro.getText().toString())){
             mAutHemocentro.setError("É necessário selecionar um hemocentro na lista.");
             mAutHemocentro.setFocusable(true);
             mAutHemocentro.requestFocus();
            return false;
         }
-
-
         return true;
     }
 
@@ -202,6 +246,8 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
         final String tipoSanguineo = mSpnSanguineo.getSelectedItem().toString();
         final String hemocentro = mAutHemocentro.getText().toString();
         final String titulo = "Pedido de doação para o hemocentro " + hemocentro;
+        final String favorecido = mEdtFavorecido.getText().toString();
+        final String data_limite_doacao = edtDataLimiteDoacao.getText().toString();
         String urlPhoto = "";
         if (getUrlPhoto()!=null){
             urlPhoto = getUrlPhoto().toString();
@@ -224,7 +270,7 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
-                            writeNewPost(userId, user.getFirst_name(), titulo ,mensagem,tipoSanguineo,hemocentro, finalUrlPhoto);
+                            writeNewPost(userId, user.getFirst_name(), titulo ,mensagem,tipoSanguineo,hemocentro, finalUrlPhoto,data_limite_doacao,favorecido);
                         }
                         setEditingEnabled(true);
                         finish();
@@ -239,12 +285,12 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
     }
 
     // Aqui a mágica acontece
-    private void writeNewPost(String userId, String username, String titulo, String body,String tipo, String hemocentro,String urlPhoto) {
+    private void writeNewPost(String userId, String username, String titulo, String body,String tipo, String hemocentro,String urlPhoto,String data_limite_doacao,String favorecido) {
 
         // Cria um novo post em /user-posts/$userid/$postid
         // e ao mesmo tempo  adiciona em /posts/$postid
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username,titulo, body,urlPhoto, tipo, hemocentro);
+        Post post = new Post(userId, username,titulo, body,urlPhoto, tipo, hemocentro,data_limite_doacao,favorecido,"pedido");
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

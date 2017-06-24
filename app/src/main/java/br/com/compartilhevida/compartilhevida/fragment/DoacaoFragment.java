@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +31,8 @@ public class DoacaoFragment extends Fragment {
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
 
+    TextView txtNenhumaDoacao;
+
     public DoacaoFragment() {
         // Required empty public constructor
     }
@@ -44,10 +47,10 @@ public class DoacaoFragment extends Fragment {
         // [START create_database_reference]
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END create_database_reference]
-
+        txtNenhumaDoacao = (TextView) rootView.findViewById(R.id.txt_nenhuma_doacao);
         mRecycler = (RecyclerView) rootView.findViewById(R.id.doaco_list);
         mRecycler.setHasFixedSize(true);
-
+        txtNenhumaDoacao.setVisibility(View.VISIBLE);
         return rootView;
     }
 
@@ -67,6 +70,8 @@ public class DoacaoFragment extends Fragment {
             @Override
             protected void populateViewHolder(final DoacaoViewHolder viewHolder, final Doacao model, final int position) {
                 viewHolder.bindToPost(model);
+                mRecycler.setVisibility(View.VISIBLE);
+                txtNenhumaDoacao.setVisibility(View.GONE);
             }
         };
         mRecycler.setAdapter(mAdapter);

@@ -21,10 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import br.com.compartilhevida.compartilhevida.models.Usuario;
 import br.com.compartilhevida.compartilhevida.LoginActivity;
 import br.com.compartilhevida.compartilhevida.R;
+import br.com.compartilhevida.compartilhevida.models.Usuario;
 
 
 public class ContaFragment extends Fragment {
@@ -43,7 +42,6 @@ public class ContaFragment extends Fragment {
     public ContaFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +120,7 @@ public class ContaFragment extends Fragment {
 
     //sign out method
     public void signOut() {
+
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
     }

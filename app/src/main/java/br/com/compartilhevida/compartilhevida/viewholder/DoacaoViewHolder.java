@@ -22,6 +22,7 @@ public class DoacaoViewHolder extends RecyclerView.ViewHolder implements Toolbar
     public Toolbar toolbarCardDoacao;
     private Context context;
 
+
     public DoacaoViewHolder(View itemView) {
         super(itemView);
         context = itemView.getContext();
@@ -30,6 +31,7 @@ public class DoacaoViewHolder extends RecyclerView.ViewHolder implements Toolbar
         txtTipoDoacao = (TextView) itemView.findViewById(R.id.txt_tipo_doacao);
         toolbarCardDoacao =(Toolbar)itemView.findViewById(R.id.toolbar_card_doacao);
         toolbarCardDoacao.inflateMenu(R.menu.action_shared);
+
 
     }
 
@@ -48,7 +50,7 @@ public class DoacaoViewHolder extends RecyclerView.ViewHolder implements Toolbar
         Date date =  new Date(doacao.getDataDoacao());
         if (date != null) {
             cal.setTime(date);
-            if (doacao.getSexoDoador().equalsIgnoreCase("Masculino")) {
+            if (doacao.getSexoDoador() !=null && doacao.getSexoDoador().equalsIgnoreCase("Masculino")) {
                 cal.add(cal.DAY_OF_MONTH, + 90);
             } else {
                 cal.add(cal.DAY_OF_MONTH, + 120);

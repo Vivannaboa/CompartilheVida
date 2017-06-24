@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,6 +62,7 @@ public abstract class PostListFragment extends Fragment {
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
+        CommentAdapter commentAdapter;
 
         // Configura o FirebaseRecyclerAdapter com a Consulta
         Query postsQuery = getQuery(mDatabase);
@@ -76,8 +76,7 @@ public abstract class PostListFragment extends Fragment {
                 final String postKey = postRef.getKey();
                 final DatabaseReference mCommentsReference = FirebaseDatabase.getInstance().getReference()
                         .child("post-comments").child(postKey);
-                CommentAdapter commentAdapter = new CommentAdapter(getActivity(), mCommentsReference);
-                viewHolder.mCommentsRecycler.setAdapter(commentAdapter);
+
 
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -92,6 +91,7 @@ public abstract class PostListFragment extends Fragment {
                     }
                 });
 
+
                 // Determine se o usuário atual gostou desta publicação e configurou a IU de acordo
                 if (model.getCoracao().containsKey(getUid())) {
                     viewHolder.starView.setImageResource(R.drawable.ic_favorite_red_24dp);
@@ -100,7 +100,7 @@ public abstract class PostListFragment extends Fragment {
                 }
 
                 // Bind Post to ViewHolder, definindo OnClickListener para o botão estrela, comentário,compartilhar
-                viewHolder.bindToPost(model, new View.OnClickListener() {
+                viewHolder.bindToPost(mCommentsReference,model, new View.OnClickListener() {
                     @Override
                     public void onClick(View starView) {
                         // Need to write to both places the post is stored
@@ -124,6 +124,13 @@ public abstract class PostListFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(PostViewHolder holder) {
+                holder.commentAdapter.cleanupListener();
+                super.onViewDetachedFromWindow(holder);
+
             }
         };
         mRecycler.setAdapter(mAdapter);
@@ -196,6 +203,7 @@ public abstract class PostListFragment extends Fragment {
             mAdapter.cleanup();
         }
     }
+
 
     public String getUid() {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
