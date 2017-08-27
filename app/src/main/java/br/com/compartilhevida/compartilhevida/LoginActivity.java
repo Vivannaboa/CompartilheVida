@@ -258,6 +258,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 accessGoogleLoginData(account.getIdToken());
 
             } else {
+                Log.i(TAG,data.toString());
                 // Google Sign In failed, update UI appropriately
                 // ...
             }
