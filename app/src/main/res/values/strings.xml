@@ -105,4 +105,6 @@
     </string>
     <string name="detail_location">"8 Rue Scribe, 75009 Paris, France"</string>
     <string name="rational_image_perm">This sample will read an image from local storage to upload to Cloud Storage.</string>
+    <string name="da_camera">Da camera</string>
+    <string name="da_galeria">Da galeria</string>
 </resources>

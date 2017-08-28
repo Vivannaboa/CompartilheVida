@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:title="@string/da_camera"
+        android:id="@+id/camera"
+        android:icon="@drawable/ic_camera_alt_white_24dp"
+        app:showAsAction="always|withText" />
+    <item
+        android:title="@string/da_galeria"
+        android:id="@+id/galeria"
+        android:icon="@drawable/ic_photo_library_black_24dp"
+        app:showAsAction="always|withText" />
+</menu>
