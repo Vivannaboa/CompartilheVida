@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+
 import br.com.compartilhevida.compartilhevida.fragment.post.MyPostsFragment;
 import br.com.compartilhevida.compartilhevida.fragment.post.RecentPostsFragment;
 

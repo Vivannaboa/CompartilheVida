@@ -34,15 +34,15 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_pedido"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <ImageView
                     android:id="@+id/toolbar_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -51,7 +51,8 @@
                     android:layout_height="match_parent"
                     android:gravity="fill_vertical"
                     android:hint="Nome do usuário"
-                    android:paddingStart="10dp" />
+                    android:paddingStart="10dp"
+                    tools:ignore="RtlSymmetry" />
             </android.support.v7.widget.Toolbar>
 
 

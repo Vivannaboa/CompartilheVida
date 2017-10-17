@@ -36,21 +36,21 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_post"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <ImageView
                     android:id="@+id/toolbar_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/post_author"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="fill_vertical"
                     android:hint="Nome do usuário"
                     android:paddingStart="10dp" />

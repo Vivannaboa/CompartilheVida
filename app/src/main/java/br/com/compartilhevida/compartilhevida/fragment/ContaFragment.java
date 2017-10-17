@@ -21,6 +21,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,6 +56,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.com.compartilhevida.compartilhevida.BuildConfig;
 import br.com.compartilhevida.compartilhevida.LoginActivity;
 import br.com.compartilhevida.compartilhevida.R;
 import br.com.compartilhevida.compartilhevida.models.Usuario;
@@ -75,7 +77,8 @@ public class ContaFragment extends Fragment implements View.OnClickListener, Pop
     private DatabaseReference mUserDatabase;
     private ImageView photoPerfil;
     private FloatingActionButton floatingActionButtonCamera;
-
+private Uri currentUri;
+    public String mCurrentPhotoPath;
     private final int CAMERA_REQUEST_CODE = 100;
     // Request code for runtime permissions
     private final int REQUEST_CODE_STORAGE_PERMS = 321;
@@ -324,39 +327,21 @@ public class ContaFragment extends Fragment implements View.OnClickListener, Pop
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                Uri uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider",photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                 startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
             }
         }
     }
     private void setPic() throws Exception {
-
-        Glide.with(getActivity()).load(mCurrentPhotoPath).transform(new CircleTransform(getActivity())).into(photoPerfil);
+        if (currentUri!=null){
+            Glide.with(getActivity()).load(currentUri).transform(new CircleTransform(getActivity())).into(photoPerfil);
+        }else{
+            Glide.with(getActivity()).load(mCurrentPhotoPath).transform(new CircleTransform(getActivity())).into(photoPerfil);
+        }
         uploadFile();
-//        // Get the dimensions of the View
-//        int targetW = photoPerfil.getWidth();
-//        int targetH = photoPerfil.getHeight();
-//
-//        // Get the dimensions of the bitmap
-//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//        bmOptions.inJustDecodeBounds = true;
-//        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        int photoW = bmOptions.outWidth;
-//        int photoH = bmOptions.outHeight;
-//
-//        // Determine how much to scale down the image
-//        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-//
-//        // Decode the image file into a Bitmap sized to fill the View
-//        bmOptions.inJustDecodeBounds = false;
-//        bmOptions.inSampleSize = scaleFactor;
-//        bmOptions.inPurgeable = true;
-//
-//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        photoPerfil.setImageBitmap(bitmap);
-//
     }
-    public String mCurrentPhotoPath;
+
 
     public File createImageFile() throws IOException {
         // Create an image file name
@@ -384,6 +369,7 @@ public class ContaFragment extends Fragment implements View.OnClickListener, Pop
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK){
             try {
+                currentUri = null;
                 setPic();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -391,6 +377,7 @@ public class ContaFragment extends Fragment implements View.OnClickListener, Pop
         }
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             mCurrentPhotoPath = data.getData().getPath();
+            currentUri = data.getData();
             try {
                 setPic();
             } catch (Exception e) {
@@ -411,9 +398,17 @@ public class ContaFragment extends Fragment implements View.OnClickListener, Pop
             //displaying a progress dialog while upload is going on
             final ProgressDialog progressDialog = new ProgressDialog(getActivity());
             progressDialog.setTitle("Uploading");
+            progressDialog.setCancelable(false);
             progressDialog.show();
 
-            StorageReference riversRef = mStorageRef.child(mAuth.getCurrentUser().getUid() + "/" + file.getLastPathSegment());
+            StorageReference riversRef;
+            if (currentUri!=null){
+                 riversRef = mStorageRef.child(mAuth.getCurrentUser().getUid() + "/" + currentUri.getLastPathSegment());
+                file = currentUri;
+            }else{
+                 riversRef = mStorageRef.child(mAuth.getCurrentUser().getUid() + "/" + file.getLastPathSegment());
+            }
+
             riversRef.putFile(file)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
