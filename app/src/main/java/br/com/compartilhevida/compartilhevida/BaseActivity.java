@@ -1,12 +1,16 @@
 package br.com.compartilhevida.compartilhevida;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -15,7 +19,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
+import br.com.compartilhevida.compartilhevida.models.Topico;
+import br.com.compartilhevida.compartilhevida.models.Usuario;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -107,4 +116,43 @@ public class BaseActivity extends AppCompatActivity {
         return new Timestamp(calendar.getTimeInMillis());
     }
 
+
+
+
+
+    public boolean isOnline() {
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return manager.getActiveNetworkInfo() != null && manager.getActiveNetworkInfo().isConnectedOrConnecting();
+    }
+
+    public void enviarNotificacao(String titulo,String mensagem, String topico){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications");
+        Map notification = new HashMap<>();
+        notification.put("titulo", titulo);
+        notification.put("topico",topico);
+        notification.put("mensagem", mensagem);
+
+        reference.push().setValue(notification);
+    }
+    public String getStrTopicosUF(){
+        Usuario mUser = Usuario.getInstance();
+        return "'"+ mUser.getCidade().substring(mUser.getCidade().indexOf("-")+2) + "' in topics ";
+    }
+    public String getStrTipoSanguineoTopico(String tipo){
+        return "'"+tipo.replace("+","_plus") +  "' in topics";
+    }
+    private String strTopicosUsuario(){
+        Usuario mUser = Usuario.getInstance();
+        String ret = null;
+        boolean i = true;
+        for (Topico item: mUser.getTopicos()) {
+            if (i){
+                ret = "'" + item.getTopico() + "' in topics";
+                i=false;
+            }else {
+                ret = ret +" && '" + item.getTopico() + "' in topics";
+            }
+        }
+        return ret.toString();
+    }
 }

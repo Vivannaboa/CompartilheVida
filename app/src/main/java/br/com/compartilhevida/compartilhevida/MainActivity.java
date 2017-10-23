@@ -109,20 +109,20 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "br.com.compartilhevida.compartilhevida",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
-
-        }
+//        try {
+//            PackageInfo info = getPackageManager().getPackageInfo(
+//                    "br.com.compartilhevida.compartilhevida",
+//                    PackageManager.GET_SIGNATURES);
+//            for (Signature signature : info.signatures) {
+//                MessageDigest md = MessageDigest.getInstance("SHA");
+//                md.update(signature.toByteArray());
+//                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+//            }
+//        } catch (PackageManager.NameNotFoundException e) {
+//
+//        } catch (NoSuchAlgorithmException e) {
+//
+//        }
 
 
         //pega instancia de usuário
@@ -342,7 +342,8 @@ public class MainActivity extends BaseActivity
                 fragmentTransaction.replace(R.id.containerView,new CartilhaFragment()).addToBackStack("Fragment").commit();
                 break;
             case R.id.nav_config:
-                fragmentTransaction.replace(R.id.containerView,new ConfigFragment()).addToBackStack("Fragment").commit();
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+//                fragmentTransaction.replace(R.id.containerView,new ConfigFragment()).addToBackStack("Fragment").commit();
                 break;
             case R.id.nav_conta:
                 fragmentTransaction.replace(R.id.containerView,new ContaFragment()).addToBackStack("Fragment").commit();

@@ -1,5 +1,7 @@
 package br.com.compartilhevida.compartilhevida.models;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,11 +12,12 @@ import java.util.Map;
 public class Doacao {
     private String uid;
     private String autor;
-    private Long dataDoacao;
+    private long dataDoacao;
     private String hemocentro;
     private boolean voluntaria;
     private String sexoDoador;
     private String favorecido;
+    private long proximaDoacao;
 
     public Doacao() {
     }
@@ -36,9 +39,11 @@ public class Doacao {
         result.put("voluntaria", voluntaria);
         result.put("sexoDoador",sexoDoador);
         result.put("favorecido", favorecido);
+        result.put("uid_user", FirebaseInstanceId.getInstance().getToken());
+        result.put("proxima_doacao",proximaDoacao);
         return result;
     }
-    public Long getDataDoacao() {
+    public long getDataDoacao() {
         return dataDoacao;
     }
 
@@ -94,4 +99,12 @@ public class Doacao {
     public void setFavorecido(String favorecido) {
         this.favorecido = favorecido;
     }
+    public long getProximaDoacao() {
+        return proximaDoacao;
+    }
+
+    public void setProximaDoacao(long proximaDoacao) {
+        this.proximaDoacao = proximaDoacao;
+    }
+
 }

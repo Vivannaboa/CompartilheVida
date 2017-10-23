@@ -3,7 +3,9 @@ package br.com.compartilhevida.compartilhevida.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
@@ -21,6 +23,7 @@ public class Usuario {
     private String tipo_sanguineo;
     private String cidade;
     private boolean recebeNotificcacao;
+    private List<Topico> topicos = new ArrayList<>();
 
     public static Usuario getInstance() {
         if (instance == null)
@@ -133,5 +136,12 @@ public class Usuario {
 
     public void setRecebeNotificcacao(boolean recebeNotificcacao) {
         this.recebeNotificcacao = recebeNotificcacao;
+    }
+    public List<Topico> getTopicos() {
+        return topicos;
+    }
+
+    public void setTopicos(List<Topico> topicos) {
+        this.topicos = topicos;
     }
 }

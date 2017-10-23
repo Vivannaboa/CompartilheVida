@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -28,9 +29,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import br.com.compartilhevida.compartilhevida.models.Topico;
 import br.com.compartilhevida.compartilhevida.models.Usuario;
 import br.com.compartilhevida.compartilhevida.util.Validador;
 
@@ -46,7 +51,7 @@ public class SignupActivity extends BaseActivity {
     private boolean editando;
     ArrayAdapter<CharSequence> adapter;
     Usuario mUsuario;
-
+    private static final String TAG = "SignupActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -294,6 +299,18 @@ public class SignupActivity extends BaseActivity {
     }
 
     private void adicionarUsuario() {
+        //registrar usuário em um tópico
+        FirebaseMessaging.getInstance().subscribeToTopic(mUsuario.getCidade().substring(mUsuario.getCidade().indexOf("-")+2));
+        FirebaseMessaging.getInstance().subscribeToTopic(mUsuario.getTipo_sanguineo().toString().replace("+","_plus"));
+        Topico topico = new Topico(mUsuario.getCidade().substring(mUsuario.getCidade().indexOf("-")+2));
+        Topico topico1 = new Topico(mUsuario.getTipo_sanguineo().toString().replace("+","_plus"));
+        List<Topico> topicos = new ArrayList<>();
+        topicos.add(topico);
+        topicos.add(topico1);
+        mUsuario.setTopicos(topicos);
+        Log.d(TAG,"Tópico estado: " + mUsuario.getCidade().substring(mUsuario.getCidade().indexOf("-")+2));
+        Log.d(TAG,"Tópico tipo sangruineo: " + mUsuario.getTipo_sanguineo());
+
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -309,8 +326,17 @@ public class SignupActivity extends BaseActivity {
     }
 
     private void atualizarUsuario() {
+        Topico topico = new Topico(mUsuario.getCidade().substring(mUsuario.getCidade().indexOf("-")+2));
+        Topico topico1 = new Topico(mUsuario.getTipo_sanguineo().toString().replace("+","_plus"));
+        List<Topico> topicos = new ArrayList<>();
+        topicos.add(topico);
+        topicos.add(topico1);
+        mUsuario.setTopicos(topicos);
+        FirebaseMessaging.getInstance().subscribeToTopic(mUsuario.getCidade().substring(mUsuario.getCidade().indexOf("-")+2));
+        FirebaseMessaging.getInstance().subscribeToTopic(mUsuario.getTipo_sanguineo().toString().replace("+","_plus"));
+        Log.d(TAG,"Tópico estado: " + mUsuario.getCidade().substring(mUsuario.getCidade().indexOf("-")+2));
+        Log.d(TAG,"Tópico tipo sangruineo: " + mUsuario.getTipo_sanguineo());
         mDatabase.updateChildren(mUsuario.toMap());
     }
-
 
 }

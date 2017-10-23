@@ -283,6 +283,7 @@ public class PedidoDoacaoActivity extends BaseActivity implements View.OnClickLi
                         setEditingEnabled(true);
                     }
                 });
+        enviarNotificacao(titulo,mensagem,getStrTopicosUF() + " && " + getStrTipoSanguineoTopico(tipoSanguineo));
     }
 
     // Aqui a mágica acontece

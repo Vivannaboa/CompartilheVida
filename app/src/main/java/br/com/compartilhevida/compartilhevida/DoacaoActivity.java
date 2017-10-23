@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 
 import java.sql.Timestamp;
@@ -184,6 +185,20 @@ public class DoacaoActivity extends BaseActivity implements
             doacao.setVoluntaria(mSwitch.isChecked());
             doacao.setFavorecido(edtFavorecido.getText().toString());
             doacao.setSexoDoador(Usuario.getInstance().getGender());
+
+            // homens a 03 meses e as mulheres a cada 04
+            Calendar cal = Calendar.getInstance();
+            Date date =  new Date(doacao.getDataDoacao());
+            if (date != null) {
+                cal.setTime(date);
+                if (doacao.getSexoDoador() !=null && doacao.getSexoDoador().equalsIgnoreCase("Masculino")) {
+                    cal.add(cal.DAY_OF_MONTH, + 90);
+                } else {
+                    cal.add(cal.DAY_OF_MONTH, + 120);
+                }
+            }
+            doacao.setProximaDoacao(cal.getTime().getTime());
+
             Map<String, Object> objectMap = doacao.toMap();
 
             Map<String, Object> childUpdates = new HashMap<>();
@@ -193,6 +208,7 @@ public class DoacaoActivity extends BaseActivity implements
             VerificaCadastroHemocentro(doacao.getHemocentro());
             Toast.makeText(this, "Doação registrada com sucesso!", Toast.LENGTH_SHORT).show();
 
+            FirebaseMessaging.getInstance().subscribeToTopic(doacao.getHemocentro());
         } catch (Exception e) {
             FirebaseCrash.report(e);
         }
