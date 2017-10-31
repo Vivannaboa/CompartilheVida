@@ -294,6 +294,11 @@ public class MainActivity extends BaseActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
+        if (FAB_Status) {
+            hideFAB();
+            FAB_Status = false;
+            return;
+        }
         int count = FM.getBackStackEntryCount();
         if (count == 0) {
             if (this.lastBackPressTime < System.currentTimeMillis() - 2000) {
@@ -307,7 +312,7 @@ public class MainActivity extends BaseActivity
                 super.onBackPressed();
             }
         } else {
-            FM.popBackStack();
+            FM.popBackStackImmediate();
         }
     }
 
